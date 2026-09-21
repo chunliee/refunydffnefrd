@@ -71,13 +71,12 @@ export default function JobListPage() {
       })
       .then((json) => {
         const data = json.data || json;
-        // Memastikan data yang disimpan selalu berupa Array
         setJobs(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch((err) => {
         setError(err.message);
-        setJobs([]); // Reset ke array kosong jika terjadi kesalahan
+        setJobs([]);
         setLoading(false);
       });
   };
@@ -98,7 +97,7 @@ export default function JobListPage() {
     setIsDragging(false);
   };
 
-  // Fungsi untuk mendownload VCRH Print File
+  // 1. Fungsi Download VCRH Print (.mac)
   const downloadVcrhPrint = async (jobId: string | number) => {
     try {
       const response = await fetch(`${baseUrl}/jobs/${jobId}/vcrhprint`, {
@@ -112,10 +111,7 @@ export default function JobListPage() {
         );
       }
 
-      // 1. Tentukan nama file default dengan ekstensi .mac
       let fileName = `VCRH_Print_Job_${jobId}.mac`;
-
-      // 2. Ambil nama file asli dari Header 'Content-Disposition' jika tersedia
       const disposition = response.headers.get("Content-Disposition");
       if (disposition && disposition.includes("filename=")) {
         const match = disposition.match(/filename="?([^";]+)"?/);
@@ -126,13 +122,11 @@ export default function JobListPage() {
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-
       const a = document.createElement("a");
       a.href = url;
-      a.download = fileName; // Menggunakan nama file .mac
+      a.download = fileName;
       document.body.appendChild(a);
       a.click();
-
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error: any) {
@@ -140,6 +134,74 @@ export default function JobListPage() {
       alert(
         `Terjadi kesalahan saat mengunduh file VCRH Print: ${error.message}`,
       );
+    }
+  };
+
+  // 2. Fungsi Download PNR Print (.mac)
+  const downloadPnrPrint = async (jobId: string | number) => {
+    try {
+      const response = await fetch(`${baseUrl}/jobs/${jobId}/pnrprint`, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `HTTP ${response.status}: ${errorText || "Gagal mengunduh file PNR Print"}`,
+        );
+      }
+
+      let fileName = `PNR_Print_Job_${jobId}.mac`;
+      const disposition = response.headers.get("Content-Disposition");
+      if (disposition && disposition.includes("filename=")) {
+        const match = disposition.match(/filename="?([^";]+)"?/);
+        if (match && match[1]) {
+          fileName = match[1];
+        }
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      console.error("Error downloading PNR Print:", error);
+      alert(
+        `Terjadi kesalahan saat mengunduh file PNR Print: ${error.message}`,
+      );
+    }
+  };
+
+  // 3. Fungsi Upload VCR File & Opsi Otomatis Proses PNR
+  const uploadVcrFile = async (jobId: string | number, file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(`${baseUrl}/jobs/${jobId}/vcrhupload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `HTTP ${response.status}: ${errorText || "Gagal mengunggah file VCR"}`,
+        );
+      }
+
+      alert(
+        "File VCR berhasil diunggah dan pemrosesan PNR dimulai di background!",
+      );
+      fetchJobs();
+    } catch (error: any) {
+      console.error("Error uploading VCR file:", error);
+      alert(`Terjadi kesalahan saat unggah VCR: ${error.message}`);
     }
   };
 
@@ -496,11 +558,11 @@ export default function JobListPage() {
               <div className="flex items-center justify-center gap-3">
                 <button
                   onClick={() => {
-                    // Jika tipe yang diklik adalah VCR, panggil endpoint vcrhprint
                     if (activeDetailModal.type === "VCR") {
                       downloadVcrhPrint(activeDetailModal.job.id);
+                    } else if (activeDetailModal.type === "PNR") {
+                      downloadPnrPrint(activeDetailModal.job.id);
                     } else {
-                      // Untuk PNR atau Manual
                       alert(
                         `Download ${activeDetailModal.type} untuk job ${activeDetailModal.job.id}`,
                       );
@@ -524,9 +586,14 @@ export default function JobListPage() {
                   className="hidden"
                   onChange={(e) => {
                     if (e.target.files?.[0]) {
-                      alert(
-                        `File terpilih untuk ${activeDetailModal.type}: ${e.target.files[0].name}`,
-                      );
+                      const selectedFile = e.target.files[0];
+                      if (activeDetailModal.type === "VCR") {
+                        uploadVcrFile(activeDetailModal.job.id, selectedFile);
+                      } else {
+                        alert(
+                          `File terpilih untuk ${activeDetailModal.type}: ${selectedFile.name}`,
+                        );
+                      }
                       setActiveDetailModal(null);
                     }
                   }}
