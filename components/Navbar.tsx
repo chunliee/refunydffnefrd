@@ -32,11 +32,11 @@ const Navbar = () => {
             </li>
 
             <li>
-              <a href="/page1">page1</a>
+              <a href="/page1">Process</a>
             </li>
 
             <li>
-              <a href="#">Contact</a>
+              <a href="/page2">Database</a>
             </li>
 
             <li>

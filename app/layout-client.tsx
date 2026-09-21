@@ -13,14 +13,12 @@ export default function LayoutClient({
   const isLoginPage = pathname === "/login";
 
   return (
-    <>
-      {/* Hanya tampilkan Navbar jika BUKAN di halaman login */}
+    <div className="min-h-screen bg-slate-50 overflow-x-hidden">
       {!isLoginPage && <Navbar />}
-
-      {/* Konten Utama */}
-      <main className={`${!isLoginPage ? "" : ""}`}>
-        <div className="container">{children}</div>
+      <main className="w-full">
+        {/* Hapus class "container" mentah, ganti dengan wrapper fleksibel */}
+        <div className="w-full px-4 sm:px-6 lg:px-8 py-6">{children}</div>
       </main>
-    </>
+    </div>
   );
 }
