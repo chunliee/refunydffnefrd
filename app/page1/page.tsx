@@ -98,6 +98,51 @@ export default function JobListPage() {
     setIsDragging(false);
   };
 
+  // Fungsi untuk mendownload VCRH Print File
+  const downloadVcrhPrint = async (jobId: string | number) => {
+    try {
+      const response = await fetch(`${baseUrl}/jobs/${jobId}/vcrhprint`, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(
+          `HTTP ${response.status}: ${errorText || "Gagal mengunduh file VCRH Print"}`,
+        );
+      }
+
+      // 1. Tentukan nama file default dengan ekstensi .mac
+      let fileName = `VCRH_Print_Job_${jobId}.mac`;
+
+      // 2. Ambil nama file asli dari Header 'Content-Disposition' jika tersedia
+      const disposition = response.headers.get("Content-Disposition");
+      if (disposition && disposition.includes("filename=")) {
+        const match = disposition.match(/filename="?([^";]+)"?/);
+        if (match && match[1]) {
+          fileName = match[1];
+        }
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName; // Menggunakan nama file .mac
+      document.body.appendChild(a);
+      a.click();
+
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error: any) {
+      console.error("Error downloading VCRH Print:", error);
+      alert(
+        `Terjadi kesalahan saat mengunduh file VCRH Print: ${error.message}`,
+      );
+    }
+  };
+
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
@@ -270,12 +315,14 @@ export default function JobListPage() {
                     <td className="py-3.5 px-4 font-mono text-slate-500 font-medium">
                       {job.id}
                     </td>
-                    {/* Type */}
+
+                    {/* Type / Refund Type */}
                     <td className="py-3.5 px-4">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-indigo-50 text-indigo-700">
                         {job.refund_type || "B2B"}
                       </span>
                     </td>
+
                     {/* File Name */}
                     <td className="py-3.5 px-4 font-medium text-slate-900">
                       {job.file_name ? (
@@ -290,17 +337,20 @@ export default function JobListPage() {
                         "-"
                       )}
                     </td>
+
                     {/* User Name */}
                     <td className="py-3.5 px-4 text-slate-600">
                       {job.uploaded_by || "Admin/System"}
                     </td>
+
                     {/* Date */}
                     <td className="py-3.5 px-4 text-slate-500">
                       {job.created_at
                         ? new Date(job.created_at).toLocaleDateString("id-ID")
                         : "-"}
                     </td>
-                    {/* Stats */}
+
+                    {/* Stats Summary */}
                     <td className="py-3.5 px-4 font-mono text-[11px] text-slate-600">
                       <div className="flex flex-col space-y-0.5">
                         <span>
@@ -335,6 +385,7 @@ export default function JobListPage() {
                         </span>
                       </div>
                     </td>
+
                     {/* API Status */}
                     <td className="py-3.5 px-4">
                       <span
@@ -347,7 +398,8 @@ export default function JobListPage() {
                         {job.api_status || "Fetching"}
                       </span>
                     </td>
-                    {/* VCR Status (Klik untuk Modal) */}
+
+                    {/* VCR Status (Aksi Modal) */}
                     <td className="py-3.5 px-4">
                       <button
                         onClick={() =>
@@ -358,7 +410,8 @@ export default function JobListPage() {
                         {job.vcr_status || "empty"}
                       </button>
                     </td>
-                    {/* PNR Status (Klik untuk Modal) */}
+
+                    {/* PNR Status (Aksi Modal) */}
                     <td className="py-3.5 px-4">
                       <button
                         onClick={() =>
@@ -369,7 +422,8 @@ export default function JobListPage() {
                         {job.pnr_status || "empty"}
                       </button>
                     </td>
-                    {/* Manual Status (Klik untuk Modal) */}
+
+                    {/* Manual Status (Aksi Modal) */}
                     <td className="py-3.5 px-4">
                       <button
                         onClick={() =>
@@ -380,6 +434,7 @@ export default function JobListPage() {
                         {job.manual_status || "empty"}
                       </button>
                     </td>
+
                     {/* Export */}
                     <td className="py-3.5 px-4">
                       <button
@@ -389,7 +444,8 @@ export default function JobListPage() {
                         Export
                       </button>
                     </td>
-                    {/* Status */}
+
+                    {/* Overall Job Status */}
                     <td className="py-3.5 px-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${
@@ -413,6 +469,7 @@ export default function JobListPage() {
       {activeDetailModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
+            {/* Header Modal */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <h3 className="font-bold text-slate-900 text-sm">
                 {activeDetailModal.type} (Job: {activeDetailModal.job.id})
@@ -424,25 +481,43 @@ export default function JobListPage() {
                 ✕
               </button>
             </div>
+
+            {/* Body Modal */}
             <div className="p-6 space-y-4 text-center">
-              <p className="text-xs text-slate-500">{activeDetailModal.type}</p>
+              <p className="text-xs text-slate-500">
+                Download MACRO or Upload{" "}
+                <strong className="text-slate-700">
+                  {activeDetailModal.type}
+                </strong>
+                :
+              </p>
+
+              {/* Tombol Aksi */}
               <div className="flex items-center justify-center gap-3">
                 <button
-                  onClick={() =>
-                    alert(
-                      `Download ${activeDetailModal.type} untuk job ${activeDetailModal.job.id}`,
-                    )
-                  }
+                  onClick={() => {
+                    // Jika tipe yang diklik adalah VCR, panggil endpoint vcrhprint
+                    if (activeDetailModal.type === "VCR") {
+                      downloadVcrhPrint(activeDetailModal.job.id);
+                    } else {
+                      // Untuk PNR atau Manual
+                      alert(
+                        `Download ${activeDetailModal.type} untuk job ${activeDetailModal.job.id}`,
+                      );
+                    }
+                  }}
                   className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium transition cursor-pointer"
                 >
                   Download
                 </button>
+
                 <button
                   onClick={() => detailFileInputRef.current?.click()}
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-medium transition cursor-pointer"
                 >
                   Upload
                 </button>
+
                 <input
                   type="file"
                   ref={detailFileInputRef}
