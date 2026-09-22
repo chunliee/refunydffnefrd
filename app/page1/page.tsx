@@ -452,9 +452,9 @@ export default function JobListPage() {
                     <td className="py-3.5 px-4">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                          job.api_status?.toLowerCase() === "done"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200/50"
-                            : "bg-amber-50 text-amber-700 border border-amber-200/50"
+                          job.api_status?.toLowerCase() === "Done"
+                            ? "bg-emerald-50 text-red-700  border border-emerald-200/50"
+                            : "bg-slate-100 text-slate-700"
                         }`}
                       >
                         {job.api_status || "Fetching"}

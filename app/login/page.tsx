@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Cookies from "js-cookie";
+import Image from "next/image";
 
 const VALID_USERS = [
   {
@@ -22,7 +23,6 @@ export default function Login() {
     e.preventDefault();
     setError("");
 
-    // LANGSUNG AMBIL DARI STATE (Bukan dari FormData agar tidak kosong)
     const currentUsername = username.trim();
     const currentPassword = password;
 
@@ -38,7 +38,6 @@ export default function Login() {
         role: user.role,
       };
 
-      // Hapus & Tulis ulang cookie secara bersih
       Cookies.remove("user_auth", { path: "/" });
 
       Cookies.set("user_auth", JSON.stringify(sessionData), {
@@ -46,7 +45,6 @@ export default function Login() {
         path: "/",
       });
 
-      // Pindah halaman total
       window.location.replace("/");
     } else {
       setError("wrong credentials");
@@ -54,53 +52,93 @@ export default function Login() {
   };
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "400px", margin: "0 auto" }}>
-      <h1>Login Page</h1>
-
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="username" style={{ display: "block" }}>
-            Username
-          </label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            required
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            style={{ width: "100%", padding: "8px", marginTop: "4px" }}
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 font-poppins">
+      <div className="w-[400px] scale-90 origin-top">
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <Image
+            src="/loginlog.jpg"
+            alt="Logo"
+            width={340}
+            height={240}
+            className="object-contain"
+            priority
           />
         </div>
+        <div className="bg-white border-4 border-red-600 rounded-3xl p-8 shadow-lg">
+          {/* Header */}
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="password" style={{ display: "block" }}>
-            Password
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "8px", marginTop: "4px" }}
-          />
-        </div>
+          <form onSubmit={handleLogin} className="space-y-5">
+            {/* Username */}
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
+                Username
+              </label>
 
-        {error && (
-          <p style={{ color: "red", fontSize: "14px", margin: "10px 0" }}>
-            {error}
+              <input
+                name="username"
+                type="text"
+                required
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  // setError("");
+                }}
+                className={`mt-2 block w-full rounded-xl px-4 py-3 font-bold text-sm text-slate-800 outline-none border-2 transition-all ${
+                  error
+                    ? "border-red-500 bg-red-50"
+                    : "border-slate-200 bg-slate-50 focus:bg-white"
+                }`}
+                placeholder=""
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
+                Password
+              </label>
+
+              <input
+                name="password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setError("");
+                }}
+                className={`mt-2 block w-full rounded-xl px-4 py-3 font-bold text-sm text-slate-800 outline-none border-2 transition-all ${
+                  error
+                    ? "border-red-500 bg-red-50 animate-pulse"
+                    : "border-slate-200 bg-slate-50 focus:bg-white"
+                }`}
+                placeholder=""
+              />
+            </div>
+
+            {/* Error
+            {error && (
+              <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-center text-xs font-bold text-red-600">
+                {error}
+              </div>
+            )} */}
+
+            {/* Button */}
+            <button
+              type="submit"
+              className="w-full rounded-xl bg-gray-400 py-3.5 text-sm font-black uppercase tracking-wide text-white transition-all hover:bg-red-600 active:scale-[0.98] cursor-pointer"
+            >
+              Login
+            </button>
+          </form>
+
+          {/* Footer */}
+          <p className="mt-7 text-center text-[10px] font-bold uppercase tracking-wider text-slate-300">
+            © 2026 - Data Analyst Dev
           </p>
-        )}
-
-        <button
-          type="submit"
-          style={{ width: "100%", padding: "10px", cursor: "pointer" }}
-        >
-          Sign In
-        </button>
-      </form>
+        </div>
+      </div>
     </div>
   );
 }
