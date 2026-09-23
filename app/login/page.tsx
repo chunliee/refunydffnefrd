@@ -52,29 +52,39 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 font-poppins">
-      <div className="w-[400px] scale-90 origin-top">
-        {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <Image
-            src="/loginlog.jpg"
-            alt="Logo"
-            width={340}
-            height={240}
-            className="object-contain"
-            priority
-          />
-        </div>
-        <div className="bg-white border-4 border-red-600 rounded-3xl p-8 shadow-lg">
-          {/* Header */}
+    <div
+      className="min-h-screen relative flex items-center justify-center px-4 font-poppins bg-cover bg-center"
+      style={{ backgroundImage: "url('/wpo.png')" }}
+    >
+      {/* Logo - pojok kiri atas */}
+      <div className="absolute top-6 left-6 mb-4">
+        <Image
+          src="/liongroup.png"
+          alt="Logo"
+          width={240}
+          height={240}
+          className="object-contain brightness-0 invert"
+          priority
+        />
+      </div>
 
+      {/* Kotak login tetap di tengah */}
+      <div className="w-[560px] scale-80 origin-top translate-y-16">
+        <div className="text-center mb-4">
+          <h1 className="text-orange-200    text-xl font-black uppercase tracking-wide">
+            Refund Value Validator
+          </h1>
+          {/* <p className="text-white/80 text-xs font-medium mt-1">
+            Silakan login untuk melanjutkan
+          </p> */}
+        </div>
+        <div className="bg-white border-4 border-orange-200 rounded-xl p-8 shadow-lg">
           <form onSubmit={handleLogin} className="space-y-5">
             {/* Username */}
             <div>
               <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
                 Username
               </label>
-
               <input
                 name="username"
                 type="text"
@@ -82,11 +92,10 @@ export default function Login() {
                 value={username}
                 onChange={(e) => {
                   setUsername(e.target.value);
-                  // setError("");
                 }}
                 className={`mt-2 block w-full rounded-xl px-4 py-3 font-bold text-sm text-slate-800 outline-none border-2 transition-all ${
                   error
-                    ? "border-red-500 bg-red-50"
+                    ? "border-red-500 bg-red-50 animate-pulse"
                     : "border-slate-200 bg-slate-50 focus:bg-white"
                 }`}
                 placeholder=""
@@ -98,7 +107,6 @@ export default function Login() {
               <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
                 Password
               </label>
-
               <input
                 name="password"
                 type="password"
@@ -117,17 +125,10 @@ export default function Login() {
               />
             </div>
 
-            {/* Error
-            {error && (
-              <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-center text-xs font-bold text-red-600">
-                {error}
-              </div>
-            )} */}
-
             {/* Button */}
             <button
               type="submit"
-              className="w-full rounded-xl bg-gray-400 py-3.5 text-sm font-black uppercase tracking-wide text-white transition-all hover:bg-red-600 active:scale-[0.98] cursor-pointer"
+              className="w-full rounded-xl bg-orange-200 py-3.5 text-sm font-black uppercase tracking-wide text-white  transition-all hover:bg-red-600 hover:border-red-600 hover:text-white  hover:active:scale-[0.98] cursor-pointer"
             >
               Login
             </button>
@@ -135,7 +136,7 @@ export default function Login() {
 
           {/* Footer */}
           <p className="mt-7 text-center text-[10px] font-bold uppercase tracking-wider text-slate-300">
-            © 2026 - Data Analyst Dev
+            © 2026 - Internal Control Data Analyst & Team Refund
           </p>
         </div>
       </div>

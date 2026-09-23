@@ -285,7 +285,10 @@ export default function JobListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 p-6 md:p-10 font-sans relative">
+    <div
+      className="min-h-screen bg-slate-50 text-slate-800 p-6 md:p-10 font-sans relative"
+      style={{ zoom: 0.8 }}
+    >
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
         <div className="flex items-center gap-4">

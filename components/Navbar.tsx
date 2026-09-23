@@ -1,62 +1,76 @@
 "use client";
 
-import React from "react";
-import Cookies from "js-cookie"; // Jangan lupa import library-nya di sini
+import Image from "next/image";
+import Link from "next/link";
+import Cookies from "js-cookie";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
+  const pathname = usePathname();
+
   const handleLogout = () => {
-    // Menghapus cookie lewat js-cookie
     Cookies.remove("user_auth", { path: "/" });
 
-    // Native fallback sebagai pengaman tambahan
     document.cookie =
       "user_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
-    // Redirect bersih memotong cache router client-side
     window.location.replace("/login");
   };
 
+  const menuItems = [
+    { label: "Home", href: "/" },
+    { label: "Process", href: "/page1" },
+    { label: "Database", href: "/page2" },
+  ];
+
   return (
-    <div className="">
-      <div className="">
-        <div className="flex items-center justify-between mr-10">
-          {/* LOGO */}
-          <div className="logo flex items-center">
-            <h1 className="h1 text-white font-bold">Logo</h1>
-          </div>
+    <nav className="bg-linear-to-bl from-blue-950 via-blue-900 to-blue-800 text-white shadow-md">
+      <div className="mx-auto flex h-15 items-center justify-between px-6 lg:px-10">
+        {/* Logo */}
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/liongroup.png"
+            alt="Logo"
+            width={150}
+            height={150}
+            className="h-16 w-50 object-contain brightness-0 invert"
+            priority
+          />
+        </Link>
 
-          {/* MENU */}
-          <ul className="menu flex items-center gap-12">
-            <li>
-              <a href="/">Home</a>
-            </li>
+        {/* Navigation */}
+        <ul className="flex items-center gap-10 text-base font-medium">
+          {menuItems.map((item) => {
+            const isActive = pathname === item.href;
 
-            <li>
-              <a href="/page1">Process</a>
-            </li>
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={`transition-colors duration-200 ${
+                    isActive
+                      ? "text-orange-200"
+                      : "text-white hover:text-blue-300"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
 
-            <li>
-              <a href="/page2">Database</a>
-            </li>
-
-            <li>
-              <button
-                onClick={handleLogout}
-                type="button"
-                className="w-full"
-                style={{
-                  cursor: "pointer",
-                  padding: "5px 10px",
-                  display: "inline-block",
-                }}
-              >
-                Logout
-              </button>
-            </li>
-          </ul>
-        </div>
+          <li>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded-md px-3 py-2 font-medium transition-colors duration-200 hover:bg-white/10 hover:text-orange-200"
+            >
+              Logout
+            </button>
+          </li>
+        </ul>
       </div>
-    </div>
+    </nav>
   );
 };
 
