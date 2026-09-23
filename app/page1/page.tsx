@@ -29,6 +29,11 @@ export default function JobListPage() {
   const [error, setError] = useState<string | null>(null);
   const [exportJobId, setExportJobId] = useState<string | null>(null);
 
+  // State untuk Pagination (Default limit: 5)
+  const [page, setPage] = useState<number>(1);
+  const [limit, setLimit] = useState<number>(5);
+  const [totalPages, setTotalPages] = useState<number>(1);
+
   // State untuk Modal Upload Multiple Files Utama
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -62,16 +67,19 @@ export default function JobListPage() {
     }
   }, []);
 
-  // Fetch data jobs dengan pengecekan array yang aman
+  // Fetch data jobs dengan pagination query params
   const fetchJobs = () => {
-    fetch(`${baseUrl}/jobs`)
+    fetch(`${baseUrl}/jobs?page=${page}&limit=${limit}`)
       .then((res) => {
         if (!res.ok) throw new Error("Gagal mengambil data dari server");
         return res.json();
       })
       .then((json) => {
-        const data = json.data || json;
+        const data = json.data || [];
         setJobs(Array.isArray(data) ? data : []);
+        if (json.meta && json.meta.total_pages) {
+          setTotalPages(json.meta.total_pages);
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -85,7 +93,7 @@ export default function JobListPage() {
     fetchJobs();
     const interval = setInterval(fetchJobs, 10000);
     return () => clearInterval(interval);
-  }, []);
+  }, [page, limit]);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -455,8 +463,8 @@ export default function JobListPage() {
                     <td className="py-3.5 px-4">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-                          job.api_status?.toLowerCase() === "Done"
-                            ? "bg-emerald-50 text-red-700  border border-emerald-200/50"
+                          job.api_status?.toLowerCase() === "done"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200/50"
                             : "bg-slate-100 text-slate-700"
                         }`}
                       >
@@ -527,6 +535,53 @@ export default function JobListPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* PAGINATION CONTROLS */}
+        <div className="flex items-center justify-between px-6 py-4 bg-slate-50/50 border-t border-slate-200 text-xs">
+          <div className="flex items-center gap-3">
+            <span className="text-slate-500">
+              Page <strong className="text-slate-700">{page}</strong> of{" "}
+              <strong className="text-slate-700">{totalPages || 1}</strong>
+            </span>
+            <span className="text-slate-300">|</span>
+            <div className="flex items-center gap-1.5 text-slate-500">
+              <span>Show:</span>
+              <select
+                value={limit}
+                onChange={(e) => {
+                  setLimit(Number(e.target.value));
+                  setPage(1); // Reset ke halaman pertama setiap kali limit berubah
+                }}
+                className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+              >
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={20}>20</option>
+                <option value={50}>50</option>
+              </select>
+              <span>Entries per page</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg font-medium hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() =>
+                setPage((prev) => (page < totalPages ? prev + 1 : prev))
+              }
+              disabled={page >= totalPages}
+              className="px-3 py-1.5 bg-white border border-slate-200 text-slate-600 rounded-lg font-medium hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
 
