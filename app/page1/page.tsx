@@ -345,7 +345,7 @@ export default function JobListPage() {
         <div className="overflow-x-auto w-full">
           <table className="w-full border-collapse text-left text-xs whitespace-nowrap">
             <thead>
-              <tr className="bg-slate-50/70 border-b border-slate-200 text-slate-600 uppercase tracking-wider text-[11px]">
+              <tr className="bg-slate-50/70 border-b border-slate-200 text-indigo-600 uppercase tracking-wider text-[11px]">
                 <th className="py-3.5 px-4 font-semibold">Job ID</th>
                 <th className="py-3.5 px-4 font-semibold">Type</th>
                 <th className="py-3.5 px-4 font-semibold">File Name</th>

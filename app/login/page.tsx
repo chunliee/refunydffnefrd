@@ -57,14 +57,19 @@ export default function Login() {
       style={{ backgroundImage: "url('/wpo.png')" }}
     >
       {/* Logo - pojok kiri atas */}
-      <div className="absolute top-6 left-6 mb-4">
-        <Image
-          src="/liongroup.png"
-          alt="Logo"
-          width={240}
-          height={240}
-          className="object-contain brightness-0 invert"
-          priority
+      <div className="absolute top-1 left-6 mb-2">
+        <div
+          className="h-16 w-50 bg-red-600"
+          style={{
+            maskImage: "url('/liongroup.png')",
+            maskRepeat: "no-repeat",
+            maskPosition: "center",
+            maskSize: "contain",
+            WebkitMaskImage: "url('/liongroup.png')",
+            WebkitMaskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            WebkitMaskSize: "contain",
+          }}
         />
       </div>
 
@@ -82,9 +87,9 @@ export default function Login() {
           <form onSubmit={handleLogin} className="space-y-5">
             {/* Username */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
+              {/* <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
                 Username
-              </label>
+              </label> */}
               <input
                 name="username"
                 type="text"
@@ -98,15 +103,15 @@ export default function Login() {
                     ? "border-red-500 bg-red-50 animate-pulse"
                     : "border-slate-200 bg-slate-50 focus:bg-white"
                 }`}
-                placeholder=""
+                placeholder="Username"
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
+              {/* <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">
                 Password
-              </label>
+              </label> */}
               <input
                 name="password"
                 type="password"
@@ -121,7 +126,7 @@ export default function Login() {
                     ? "border-red-500 bg-red-50 animate-pulse"
                     : "border-slate-200 bg-slate-50 focus:bg-white"
                 }`}
-                placeholder=""
+                placeholder="Password"
               />
             </div>
 
