@@ -10,9 +10,9 @@ export default function Home() {
       {/* Header */}
       <div className="mb-2">
         <h1 className="font-header text-3xl text-gray-800">Dashboard</h1>
-        <p className="text-sm text-gray-500">
+        {/* <p className="text-sm text-gray-500">
           Ringkasan proses refund &amp; exchange ticket.
-        </p>
+        </p> */}
       </div>
 
       {/* Layout: kiri chart, kanan export */}
