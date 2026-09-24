@@ -29,18 +29,24 @@ export default function JobListPage() {
   const [error, setError] = useState<string | null>(null);
   const [exportJobId, setExportJobId] = useState<string | null>(null);
 
-  // State untuk Pagination (Default limit: 5)
+  // === State Filter Lengkap ===
+  const [search, setSearch] = useState<string>("");
+  const [jobIdFilter, setJobIdFilter] = useState<string>("");
+  const [refundType, setRefundType] = useState<string>("");
+  const [uploadedBy, setUploadedBy] = useState<string>("");
+  const [fileName, setFileName] = useState<string>("");
+
+  // State untuk Pagination
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5);
   const [totalPages, setTotalPages] = useState<number>(1);
 
-  // State untuk Modal Upload Multiple Files Utama
+  // State Modals
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
 
-  // State untuk Modal Aksi/Detail (VCR / PNR / Manual)
   const [activeDetailModal, setActiveDetailModal] = useState<{
     type: "VCR" | "PNR" | "Manual";
     job: JobItem;
@@ -67,9 +73,21 @@ export default function JobListPage() {
     }
   }, []);
 
-  // Fetch data jobs dengan pagination query params
+  // Fetch data jobs dengan semua query parameters filter
   const fetchJobs = () => {
-    fetch(`${baseUrl}/jobs?page=${page}&limit=${limit}`)
+    const params = new URLSearchParams();
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
+
+    if (search) params.append("search", search);
+    if (jobIdFilter) params.append("_id", jobIdFilter);
+    if (refundType) params.append("refund_type", refundType);
+    if (uploadedBy) params.append("uploaded_by", uploadedBy);
+    if (fileName) params.append("file_name", fileName);
+
+    const url = `${baseUrl}/jobs?${params.toString()}`;
+
+    fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error("Gagal mengambil data dari server");
         return res.json();
@@ -93,7 +111,16 @@ export default function JobListPage() {
     fetchJobs();
     const interval = setInterval(fetchJobs, 10000);
     return () => clearInterval(interval);
-  }, [page, limit]);
+  }, [page, limit, search, jobIdFilter, refundType, uploadedBy, fileName]);
+
+  const handleResetFilters = () => {
+    setSearch("");
+    setJobIdFilter("");
+    setRefundType("");
+    setUploadedBy("");
+    setFileName("");
+    setPage(1);
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -105,29 +132,14 @@ export default function JobListPage() {
     setIsDragging(false);
   };
 
-  // 1. Fungsi Download VCRH Print (.mac)
+  // Download & Upload helpers
   const downloadVcrhPrint = async (jobId: string | number) => {
     try {
       const response = await fetch(`${baseUrl}/jobs/${jobId}/vcrhprint`, {
         method: "GET",
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP ${response.status}: ${errorText || "Gagal mengunduh file VCRH Print"}`,
-        );
-      }
-
+      if (!response.ok) throw new Error("Gagal mengunduh file VCRH Print");
       let fileName = `VCRH_Print_Job_${jobId}.mac`;
-      const disposition = response.headers.get("Content-Disposition");
-      if (disposition && disposition.includes("filename=")) {
-        const match = disposition.match(/filename="?([^";]+)"?/);
-        if (match && match[1]) {
-          fileName = match[1];
-        }
-      }
-
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -138,36 +150,17 @@ export default function JobListPage() {
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error: any) {
-      console.error("Error downloading VCRH Print:", error);
-      alert(
-        `Terjadi kesalahan saat mengunduh file VCRH Print: ${error.message}`,
-      );
+      alert(`Error: ${error.message}`);
     }
   };
 
-  // 2. Fungsi Download PNR Print (.mac)
   const downloadPnrPrint = async (jobId: string | number) => {
     try {
       const response = await fetch(`${baseUrl}/jobs/${jobId}/pnrprint`, {
         method: "GET",
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP ${response.status}: ${errorText || "Gagal mengunduh file PNR Print"}`,
-        );
-      }
-
+      if (!response.ok) throw new Error("Gagal mengunduh file PNR Print");
       let fileName = `PNR_Print_Job_${jobId}.mac`;
-      const disposition = response.headers.get("Content-Disposition");
-      if (disposition && disposition.includes("filename=")) {
-        const match = disposition.match(/filename="?([^";]+)"?/);
-        if (match && match[1]) {
-          fileName = match[1];
-        }
-      }
-
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -178,38 +171,23 @@ export default function JobListPage() {
       a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error: any) {
-      console.error("Error downloading PNR Print:", error);
-      alert(
-        `Terjadi kesalahan saat mengunduh file PNR Print: ${error.message}`,
-      );
+      alert(`Error: ${error.message}`);
     }
   };
 
-  // 3. Fungsi Upload VCR File & Opsi Otomatis Proses PNR
   const uploadVcrFile = async (jobId: string | number, file: File) => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-
       const response = await fetch(`${baseUrl}/jobs/${jobId}/vcrhupload`, {
         method: "POST",
         body: formData,
       });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(
-          `HTTP ${response.status}: ${errorText || "Gagal mengunggah file VCR"}`,
-        );
-      }
-
-      alert(
-        "File VCR berhasil diunggah dan pemrosesan PNR dimulai di background!",
-      );
+      if (!response.ok) throw new Error("Gagal mengunggah file VCR");
+      alert("File VCR berhasil diunggah!");
       fetchJobs();
     } catch (error: any) {
-      console.error("Error uploading VCR file:", error);
-      alert(`Terjadi kesalahan saat unggah VCR: ${error.message}`);
+      alert(`Error: ${error.message}`);
     }
   };
 
@@ -237,7 +215,6 @@ export default function JobListPage() {
   const handleUploadSubmit = () => {
     if (selectedFiles.length === 0) return;
     setUploading(true);
-
     const formData = new FormData();
     selectedFiles.forEach((file) => formData.append("file", file));
 
@@ -298,7 +275,7 @@ export default function JobListPage() {
       style={{ zoom: 0.8 }}
     >
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsModalOpen(true)}
@@ -348,6 +325,110 @@ export default function JobListPage() {
         </button>
       </div>
 
+      {/* FILTER BARIS ATAS (MEMUAT SEMUA PARAMETER BACKEND) */}
+      <div className="mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+          {/* 1. Global Search */}
+          {/* <div>
+            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+              Global Search
+            </label>
+            <input
+              type="text"
+              placeholder="Cari kata kunci..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div> */}
+
+          {/* 2. Job ID */}
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+              Job ID
+            </label>
+            <input
+              type="text"
+              placeholder=""
+              value={jobIdFilter}
+              onChange={(e) => {
+                setJobIdFilter(e.target.value);
+                setPage(1);
+              }}
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono"
+            />
+          </div>
+
+          {/* 3. Refund Type */}
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+              Refund Type
+            </label>
+            <select
+              value={refundType}
+              onChange={(e) => {
+                setRefundType(e.target.value);
+                setPage(1);
+              }}
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+            >
+              <option value="">All Type</option>
+              <option value="B2B">B2B</option>
+              <option value="B2C">B2C</option>
+            </select>
+          </div>
+
+          {/* 4. Uploaded By */}
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+              Uploaded By
+            </label>
+            <input
+              type="text"
+              placeholder=""
+              value={uploadedBy}
+              onChange={(e) => {
+                setUploadedBy(e.target.value);
+                setPage(1);
+              }}
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+
+          {/* 5. File Name */}
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+              File Name
+            </label>
+            <input
+              type="text"
+              placeholder=""
+              value={fileName}
+              onChange={(e) => {
+                setFileName(e.target.value);
+                setPage(1);
+              }}
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+        </div>
+
+        {/* Tombol Reset Filter */}
+        {(search || jobIdFilter || refundType || uploadedBy || fileName) && (
+          <div className="flex justify-end pt-1">
+            <button
+              onClick={handleResetFilters}
+              className="text-xs text-red-600 hover:text-red-700 font-semibold cursor-pointer underline"
+            >
+              Reset Semua Filter
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* TABLE CONTAINER */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto w-full">
@@ -384,19 +465,14 @@ export default function JobListPage() {
                     key={job.id}
                     className="hover:bg-slate-50/80 transition-colors"
                   >
-                    {/* Job ID */}
                     <td className="py-3.5 px-4 font-mono text-slate-500 font-medium">
                       {job.id}
                     </td>
-
-                    {/* Type / Refund Type */}
                     <td className="py-3.5 px-4">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-indigo-50 text-indigo-700">
                         {job.refund_type || "B2B"}
                       </span>
                     </td>
-
-                    {/* File Name */}
                     <td className="py-3.5 px-4 font-medium text-slate-900">
                       {job.file_name ? (
                         <div className="flex flex-col space-y-0.5">
@@ -410,20 +486,14 @@ export default function JobListPage() {
                         "-"
                       )}
                     </td>
-
-                    {/* User Name */}
                     <td className="py-3.5 px-4 text-slate-600">
                       {job.uploaded_by || "Admin/System"}
                     </td>
-
-                    {/* Date */}
                     <td className="py-3.5 px-4 text-slate-500">
                       {job.created_at
                         ? new Date(job.created_at).toLocaleDateString("id-ID")
                         : "-"}
                     </td>
-
-                    {/* Stats Summary */}
                     <td className="py-3.5 px-4 font-mono text-[11px] text-slate-600">
                       <div className="flex flex-col space-y-0.5">
                         <span>
@@ -458,8 +528,6 @@ export default function JobListPage() {
                         </span>
                       </div>
                     </td>
-
-                    {/* API Status */}
                     <td className="py-3.5 px-4">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ${
@@ -471,8 +539,6 @@ export default function JobListPage() {
                         {job.api_status || "Fetching"}
                       </span>
                     </td>
-
-                    {/* VCR Status (Aksi Modal) */}
                     <td className="py-3.5 px-4">
                       <button
                         onClick={() =>
@@ -483,8 +549,6 @@ export default function JobListPage() {
                         {job.vcr_status || "empty"}
                       </button>
                     </td>
-
-                    {/* PNR Status (Aksi Modal) */}
                     <td className="py-3.5 px-4">
                       <button
                         onClick={() =>
@@ -495,8 +559,6 @@ export default function JobListPage() {
                         {job.pnr_status || "empty"}
                       </button>
                     </td>
-
-                    {/* Manual Status (Aksi Modal) */}
                     <td className="py-3.5 px-4">
                       <button
                         onClick={() =>
@@ -507,8 +569,6 @@ export default function JobListPage() {
                         {job.manual_status || "empty"}
                       </button>
                     </td>
-
-                    {/* Export */}
                     <td className="py-3.5 px-4">
                       <button
                         onClick={() => setExportJobId(job.id)}
@@ -517,8 +577,6 @@ export default function JobListPage() {
                         Export
                       </button>
                     </td>
-
-                    {/* Overall Job Status */}
                     <td className="py-3.5 px-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${
@@ -551,7 +609,7 @@ export default function JobListPage() {
                 value={limit}
                 onChange={(e) => {
                   setLimit(Number(e.target.value));
-                  setPage(1); // Reset ke halaman pertama setiap kali limit berubah
+                  setPage(1);
                 }}
                 className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
               >
@@ -585,11 +643,10 @@ export default function JobListPage() {
         </div>
       </div>
 
-      {/* MODAL AKSI (VCR / PNR / Manual) BERISI TOMBOL DOWNLOAD & UPLOAD */}
+      {/* MODALS */}
       {activeDetailModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
-            {/* Header Modal */}
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden border border-slate-100">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <h3 className="font-bold text-slate-900 text-sm">
                 {activeDetailModal.type} (Job: {activeDetailModal.job.id})
@@ -601,8 +658,6 @@ export default function JobListPage() {
                 ✕
               </button>
             </div>
-
-            {/* Body Modal */}
             <div className="p-6 space-y-4 text-center">
               <p className="text-xs text-slate-500">
                 Download MACRO or Upload{" "}
@@ -611,8 +666,6 @@ export default function JobListPage() {
                 </strong>
                 :
               </p>
-
-              {/* Tombol Aksi */}
               <div className="flex items-center justify-center gap-3">
                 <button
                   onClick={() => {
@@ -621,23 +674,19 @@ export default function JobListPage() {
                     } else if (activeDetailModal.type === "PNR") {
                       downloadPnrPrint(activeDetailModal.job.id);
                     } else {
-                      alert(
-                        `Download ${activeDetailModal.type} untuk job ${activeDetailModal.job.id}`,
-                      );
+                      alert(`Download ${activeDetailModal.type}`);
                     }
                   }}
                   className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-medium transition cursor-pointer"
                 >
                   Download
                 </button>
-
                 <button
                   onClick={() => detailFileInputRef.current?.click()}
                   className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-medium transition cursor-pointer"
                 >
                   Upload
                 </button>
-
                 <input
                   type="file"
                   ref={detailFileInputRef}
@@ -647,10 +696,6 @@ export default function JobListPage() {
                       const selectedFile = e.target.files[0];
                       if (activeDetailModal.type === "VCR") {
                         uploadVcrFile(activeDetailModal.job.id, selectedFile);
-                      } else {
-                        alert(
-                          `File terpilih untuk ${activeDetailModal.type}: ${selectedFile.name}`,
-                        );
                       }
                       setActiveDetailModal(null);
                     }
@@ -662,10 +707,9 @@ export default function JobListPage() {
         </div>
       )}
 
-      {/* MODAL MULTIPLE DRAG & DROP UPLOAD UTAMA */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-100">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <h3 className="font-bold text-slate-900 text-sm">
                 Upload Multiple Refund Files (CSV)
@@ -701,21 +745,6 @@ export default function JobListPage() {
                   className="hidden"
                 />
                 <div className="flex flex-col items-center justify-center space-y-2">
-                  <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                      />
-                    </svg>
-                  </div>
                   <p className="text-xs font-medium text-slate-700">
                     Drag & drop file CSV di sini, atau{" "}
                     <span className="text-indigo-600 font-semibold">
@@ -735,14 +764,12 @@ export default function JobListPage() {
                       key={index}
                       className="flex items-center justify-between bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs"
                     >
-                      <div className="truncate pr-2">
-                        <p className="font-semibold text-slate-800 truncate">
-                          {file.name}
-                        </p>
-                      </div>
+                      <p className="font-semibold text-slate-800 truncate pr-2">
+                        {file.name}
+                      </p>
                       <button
                         onClick={() => removeFile(index)}
-                        className="text-red-500 hover:text-red-700 font-bold p-1 cursor-pointer shrink-0"
+                        className="text-red-500 hover:text-red-700 font-bold cursor-pointer"
                       >
                         ✕
                       </button>
@@ -757,14 +784,14 @@ export default function JobListPage() {
                   setIsModalOpen(false);
                   setSelectedFiles([]);
                 }}
-                className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200/60 rounded-xl transition cursor-pointer"
+                className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-xl transition cursor-pointer"
               >
                 Batal
               </button>
               <button
                 onClick={handleUploadSubmit}
                 disabled={selectedFiles.length === 0 || uploading}
-                className="px-4 py-2 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white rounded-xl shadow-sm transition cursor-pointer disabled:cursor-not-allowed"
+                className="px-4 py-2 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white rounded-xl transition cursor-pointer"
               >
                 {uploading
                   ? "Mengunggah..."
