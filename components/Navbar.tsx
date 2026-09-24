@@ -24,12 +24,12 @@ const Navbar = () => {
   ];
 
   return (
-    <nav className="bg-linear-to-r from-blue-950 via-blue-800 to-blue-950 text-white shadow-md">
+    <nav className="bg-linear-to-r from-blue-950 via-orange-100 to-blue-950 text-white shadow-md">
       <div className="mx-auto flex h-15 items-center justify-between px-6 lg:px-10">
         {/* Logo */}
         <Link href="/" className="flex items-center">
           <div
-            className="h-16 w-50 bg-red-600"
+            className="h-16 w-50 bg-orange-200"
             style={{
               maskImage: "url('/liongroup.png')",
               maskRepeat: "no-repeat",

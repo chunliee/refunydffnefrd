@@ -59,7 +59,7 @@ export default function Login() {
       {/* Logo - pojok kiri atas */}
       <div className="absolute top-1 left-6 mb-2">
         <div
-          className="h-16 w-50 bg-red-600"
+          className="h-16 w-50 bg-orange-200"
           style={{
             maskImage: "url('/liongroup.png')",
             maskRepeat: "no-repeat",
