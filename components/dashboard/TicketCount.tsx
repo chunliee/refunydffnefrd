@@ -19,9 +19,7 @@ export default function TrendTicketCount() {
         <h3 className="text-sm font-semibold text-gray-700">
           Refund Amount — Last 14 Days
         </h3>
-        <span className="text-xs text-gray-400">
-          excl. rejected · miliar Rupiah
-        </span>
+        <span className="text-xs text-gray-400">excl</span>
       </div>
 
       <div className="h-64">
