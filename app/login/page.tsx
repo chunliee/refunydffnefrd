@@ -12,13 +12,13 @@ const VALID_USERS = [
     name: "admin",
     role: "admin",
   },
-  {
-    id: "sa",
-    username: "sa",
-    password: "123",
-    name: "supauser",
-    role: "admin",
-  },
+  // {
+  //   id: "sa",
+  //   username: "sa",
+  //   password: "123",
+  //   name: "supauser",
+  //   role: "admin",
+  // },
 ];
 
 export default function Login() {
