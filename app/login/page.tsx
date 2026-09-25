@@ -6,6 +6,13 @@ import Image from "next/image";
 
 const VALID_USERS = [
   {
+    id: "260284",
+    username: "260284",
+    password: "goyim",
+    name: "admin",
+    role: "admin",
+  },
+  {
     id: "sa",
     username: "sa",
     password: "123",
@@ -76,7 +83,7 @@ export default function Login() {
       {/* Kotak login tetap di tengah */}
       <div className="w-[560px] scale-80 origin-top translate-y-16">
         <div className="text-center mb-4">
-          <h1 className="text-orange-200    text-xl font-black uppercase tracking-wide">
+          <h1 className="text-orange-200 text-3xl font-black uppercase tracking-wide">
             Refund Value Validator
           </h1>
           {/* <p className="text-white/80 text-xs font-medium mt-1">
@@ -100,7 +107,7 @@ export default function Login() {
                 }}
                 className={`mt-2 block w-full rounded-xl px-4 py-3 font-bold text-sm text-slate-800 outline-none border-2 transition-all ${
                   error
-                    ? "border-red-500 bg-red-50 animate-pulse"
+                    ? "border-red-500 bg-red-50 animate-[borderPulse_1s_ease-in-out_infinite]"
                     : "border-slate-200 bg-slate-50 focus:bg-white"
                 }`}
                 placeholder="Username"
