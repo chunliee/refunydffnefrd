@@ -456,7 +456,7 @@ export default function JobListPage() {
                     colSpan={12}
                     className="px-4 py-12 text-center text-slate-400 font-medium"
                   >
-                    Tidak ada data job ditemukan.
+                    No Job Found
                   </td>
                 </tr>
               ) : (

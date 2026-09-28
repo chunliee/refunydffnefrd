@@ -7,7 +7,7 @@ import Image from "next/image";
 const VALID_USERS = [
   {
     id: "260284",
-    username: "260284",
+    username: "admin",
     password: "goyim",
     name: "admin",
     role: "admin",
