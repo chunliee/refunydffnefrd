@@ -60,6 +60,7 @@ export default function JobListPage() {
       ? `http://${window.location.hostname}:8084`
       : "";
   const [userRole, setUserRole] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
 
   useEffect(() => {
     const auth = Cookies.get("user_auth");
@@ -67,11 +68,23 @@ export default function JobListPage() {
       try {
         const parsed = JSON.parse(auth);
         setUserRole(parsed.role);
+        setUserName(parsed.agent);
       } catch (err) {
-        console.error("Gagal parse role:", err);
+        console.error("Gagal parse auth:", err);
       }
     }
   }, []);
+
+  const isAdmin = userRole === "admin";
+
+  /**
+   * Admin: bisa akses semua job.
+   * Staff: hanya job miliknya sendiri (uploaded_by === agent).
+   */
+  const canManageJob = (job: JobItem): boolean => {
+    if (isAdmin) return true;
+    return job.uploaded_by === userName;
+  };
 
   // Fetch data jobs dengan semua query parameters filter
   const fetchJobs = () => {
@@ -215,8 +228,14 @@ export default function JobListPage() {
   const handleUploadSubmit = () => {
     if (selectedFiles.length === 0) return;
     setUploading(true);
+
     const formData = new FormData();
-    selectedFiles.forEach((file) => formData.append("file", file));
+
+    // 1. Ubah "file" menjadi "files" agar mendukung multi-file upload
+    selectedFiles.forEach((file) => formData.append("files", file));
+
+    // 2. Tambahkan nama user dari state userName (diambil dari cookies)
+    formData.append("uploaded_by", userName || "Admin/System");
 
     fetch(`${baseUrl}/upload/refund/csv`, {
       method: "POST",
@@ -541,30 +560,60 @@ export default function JobListPage() {
                     </td>
                     <td className="py-3.5 px-4">
                       <button
-                        onClick={() =>
-                          setActiveDetailModal({ type: "VCR", job })
+                        onClick={() => {
+                          if (canManageJob(job)) {
+                            setActiveDetailModal({ type: "VCR", job });
+                          }
+                        }}
+                        disabled={!canManageJob(job)}
+                        title={
+                          !canManageJob(job) ? "Bukan job Anda" : undefined
                         }
-                        className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-medium transition cursor-pointer"
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${
+                          canManageJob(job)
+                            ? "bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"
+                            : "bg-slate-50 text-slate-300 cursor-not-allowed"
+                        }`}
                       >
                         {job.vcr_status || "empty"}
                       </button>
                     </td>
                     <td className="py-3.5 px-4">
                       <button
-                        onClick={() =>
-                          setActiveDetailModal({ type: "PNR", job })
+                        onClick={() => {
+                          if (canManageJob(job)) {
+                            setActiveDetailModal({ type: "PNR", job });
+                          }
+                        }}
+                        disabled={!canManageJob(job)}
+                        title={
+                          !canManageJob(job) ? "Bukan job Anda" : undefined
                         }
-                        className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-medium transition cursor-pointer"
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${
+                          canManageJob(job)
+                            ? "bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"
+                            : "bg-slate-50 text-slate-300 cursor-not-allowed"
+                        }`}
                       >
                         {job.pnr_status || "empty"}
                       </button>
                     </td>
                     <td className="py-3.5 px-4">
                       <button
-                        onClick={() =>
-                          setActiveDetailModal({ type: "Manual", job })
+                        onClick={() => {
+                          if (canManageJob(job)) {
+                            setActiveDetailModal({ type: "Manual", job });
+                          }
+                        }}
+                        disabled={!canManageJob(job)}
+                        title={
+                          !canManageJob(job) ? "Bukan job Anda" : undefined
                         }
-                        className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-medium transition cursor-pointer"
+                        className={`px-2.5 py-1 rounded-lg text-[11px] font-medium transition ${
+                          canManageJob(job)
+                            ? "bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"
+                            : "bg-slate-50 text-slate-300 cursor-not-allowed"
+                        }`}
                       >
                         {job.manual_status || "empty"}
                       </button>

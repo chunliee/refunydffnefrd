@@ -4,23 +4,99 @@ import React, { useState } from "react";
 import Cookies from "js-cookie";
 import Image from "next/image";
 
-const VALID_USERS = [
+const admin = [
   {
     id: "260284",
-    username: "admin",
+    username: "260284",
     password: "goyim",
-    name: "admin",
+    name: "Admin",
+    agent: "dev",
     role: "admin",
   },
   {
-    id: "sa",
-    username: "sa",
+    id: "sagoyim",
+    username: "sagoyim",
     password: "123",
-    name: "supauser",
+    name: "Admin",
+    agent: "dev",
     role: "admin",
   },
 ];
 
+const VALID_USERS = [
+  {
+    id: "260284",
+    username: "260284",
+    password: "goyim",
+    name: "Admin",
+    agent: "dev",
+    role: "admin",
+  },
+  {
+    id: "sagoyim",
+    username: "sagoyim",
+    password: "123",
+    name: "Admin",
+    agent: "dev",
+    role: "admin",
+  },
+  {
+    id: "150271",
+    username: "150271",
+    password: "789ew",
+    name: "TAUFIK",
+    agent: "JKTBA0",
+    role: "staff",
+  },
+  {
+    id: "56138769",
+    username: "56138769",
+    password: "234kj",
+    name: "Alif",
+    agent: "JKTBAW",
+    role: "staff",
+  },
+  {
+    id: "56128107",
+    username: "56128107",
+    password: "341cx",
+    name: "MIA",
+    agent: "JKTBML",
+    role: "staff",
+  },
+  {
+    id: "153938",
+    username: "153938",
+    password: "987xe",
+    name: "FITRI",
+    agent: "JKTBFU",
+    role: "staff",
+  },
+  {
+    id: "133604",
+    username: "133604",
+    password: "192ko",
+    name: "MAGDALENA LAWA",
+    agent: "JKTBMN",
+    role: "staff",
+  },
+  {
+    id: "56117260",
+    username: "56117260",
+    password: "354me",
+    name: "AGNI",
+    agent: "JKTBAJ",
+    role: "staff",
+  },
+  {
+    id: "56116646",
+    username: "56116646",
+    password: "432ce",
+    name: "SURIYADIH",
+    agent: "JKTBSU",
+    role: "staff",
+  },
+];
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -43,6 +119,7 @@ export default function Login() {
         username: user.username,
         name: user.name,
         role: user.role,
+        agent: user.agent,
       };
 
       Cookies.remove("user_auth", { path: "/" });
