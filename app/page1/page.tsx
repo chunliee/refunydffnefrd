@@ -442,7 +442,7 @@ export default function JobListPage() {
               onClick={handleResetFilters}
               className="text-xs text-red-600 hover:text-red-700 font-semibold cursor-pointer underline"
             >
-              Reset Semua Filter
+              Reset All Filter
             </button>
           </div>
         )}
