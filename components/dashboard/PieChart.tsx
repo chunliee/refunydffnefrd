@@ -1,17 +1,48 @@
 // components/dashboard/StatPieChart.tsx
 "use client";
 
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { actionDistribution } from "@/lib/dummy-data";
 
 const total = actionDistribution.reduce((s, d) => s + d.value, 0);
+
+interface LegendItem {
+  value?: number;
+  color?: string;
+  payload?: { name: string; value: number; fill: string };
+}
+
+const CustomLegend = ({ payload }: { payload?: LegendItem[] }) => {
+  if (!payload) return null;
+
+  return (
+    <ul className="mt-2 flex flex-col gap-1.5 text-xs">
+      {payload.map((entry, idx) => {
+        const value = entry.payload?.value ?? 0;
+        const pct = total > 0 ? (value / total) * 100 : 0;
+
+        return (
+          <li
+            key={idx}
+            className="flex items-center justify-between gap-3 text-gray-600"
+          >
+            <span className="flex items-center gap-2">
+              <span
+                className="inline-block h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              {entry.payload?.name ?? "-"}
+            </span>
+            <span className="font-mono text-gray-500">
+              {value.toLocaleString()}{" "}
+              <span className="text-gray-400">({pct.toFixed(1)}%)</span>
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+};
 
 export default function StatPieChart() {
   return (
@@ -46,14 +77,18 @@ export default function StatPieChart() {
                 n,
               ]}
             />
-            <Legend
-              verticalAlign="bottom"
-              iconType="circle"
-              wrapperStyle={{ fontSize: 12 }}
-            />
           </PieChart>
         </ResponsiveContainer>
       </div>
+
+      {/* Legend custom di luar chart — nggak interaktif */}
+      <CustomLegend
+        payload={actionDistribution.map((d) => ({
+          value: d.value,
+          color: d.fill,
+          payload: { name: d.name, value: d.value, fill: d.fill },
+        }))}
+      />
     </div>
   );
 }

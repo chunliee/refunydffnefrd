@@ -2,9 +2,9 @@
 
 // 1. Pie: 1_action distribution
 export const actionDistribution = [
-  { name: "Autocheck", value: 3750, fill: "#3b82f6" }, // biru
-  { name: "Manual", value: 220, fill: "#f97316" }, // oranye
-  { name: "Rejected", value: 80, fill: "#ef4444" }, // merah
+  { name: "Autocheck", value: 13750, fill: "#3b82f6" }, // biru
+  { name: "Manual", value: 5220, fill: "#f97316" }, // oranye
+  { name: "Rejected", value: 180, fill: "#ef4444" }, // merah
 ];
 
 // helper generate 14 hari terakhir

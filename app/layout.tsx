@@ -19,10 +19,10 @@ const fontInter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Internal Control Data Transmitter (ICTD)",
-  // icons: {
-  //   icon: "/assets/logolag.PNG",
-  // },
+  title: "Refund Value Validator",
+  icons: {
+    icon: "/logolag.PNG",
+  },
 };
 
 export default function RootLayout({
