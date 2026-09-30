@@ -118,7 +118,7 @@ export default function ExportPanel() {
         <div>
           <div className="mb-1 flex items-center justify-between">
             <label className="block text-xs font-medium text-gray-600">
-              No. Ticket <span className="text-gray-400">(bulk)</span>
+              No. Ticket <span className="text-gray-400"></span>
             </label>
             {preview.tickets.length > 0 && (
               <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
@@ -139,7 +139,7 @@ export default function ExportPanel() {
         <div>
           <div className="mb-1 flex items-center justify-between">
             <label className="block text-xs font-medium text-gray-600">
-              PNR Code <span className="text-gray-400">(bulk)</span>
+              PNR Code <span className="text-gray-400"></span>
             </label>
             {preview.pnrs.length > 0 && (
               <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
