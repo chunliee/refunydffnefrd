@@ -197,7 +197,7 @@ export default function JobListPage() {
         body: formData,
       });
       if (!response.ok) throw new Error("Gagal mengunggah file VCR");
-      alert("File VCR berhasil diunggah!");
+      alert("VCR Uploaded!");
       fetchJobs();
     } catch (error: any) {
       alert(`Error: ${error.message}`);
@@ -213,7 +213,7 @@ export default function JobListPage() {
         body: formData,
       });
       if (!response.ok) throw new Error("Gagal mengunggah file PNR");
-      alert("File PNR berhasil diunggah!");
+      alert("PNR Uploaded!");
       fetchJobs();
     } catch (error: any) {
       alert(`Error: ${error.message}`);
@@ -228,7 +228,7 @@ export default function JobListPage() {
         body: formData,
       });
       if (!response.ok) throw new Error("Gagal mengunggah file Manual");
-      alert("File Manual berhasil diunggah!");
+      alert("Manual Uploaded!");
       fetchJobs();
     } catch (error: any) {
       alert(`Error: ${error.message}`);
