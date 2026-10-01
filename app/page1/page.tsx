@@ -204,6 +204,37 @@ export default function JobListPage() {
     }
   };
 
+  const uploadPnrFile = async (jobId: string | number, file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch(`${baseUrl}/jobs/${jobId}/cfupload`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) throw new Error("Gagal mengunggah file PNR");
+      alert("File PNR berhasil diunggah!");
+      fetchJobs();
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+  const uploadManualFile = async (jobId: string | number, file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch(`${baseUrl}/jobs/${jobId}/manualupload`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) throw new Error("Gagal mengunggah file Manual");
+      alert("File Manual berhasil diunggah!");
+      fetchJobs();
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    }
+  };
+
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
@@ -745,6 +776,13 @@ export default function JobListPage() {
                       const selectedFile = e.target.files[0];
                       if (activeDetailModal.type === "VCR") {
                         uploadVcrFile(activeDetailModal.job.id, selectedFile);
+                      } else if (activeDetailModal.type === "PNR") {
+                        uploadPnrFile(activeDetailModal.job.id, selectedFile);
+                      } else if (activeDetailModal.type === "Manual") {
+                        uploadManualFile(
+                          activeDetailModal.job.id,
+                          selectedFile,
+                        );
                       }
                       setActiveDetailModal(null);
                     }
