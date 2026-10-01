@@ -294,7 +294,7 @@ export default function JobListPage() {
         <div className="flex items-center space-x-3 bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
           <div className="w-4 h-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-slate-600 font-medium text-sm">
-            Memuat data job...
+            Load Refund Data....
           </p>
         </div>
       </div>
