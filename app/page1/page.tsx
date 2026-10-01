@@ -349,7 +349,7 @@ export default function JobListPage() {
 
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-              Job Processing Management
+              Refund Processing Management
             </h1>
           </div>
         </div>
