@@ -873,7 +873,7 @@ export default function JobListPage() {
                 }}
                 className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-xl transition cursor-pointer"
               >
-                Batal
+                Cancel
               </button>
               <button
                 onClick={handleUploadSubmit}
