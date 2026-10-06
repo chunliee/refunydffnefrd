@@ -881,7 +881,7 @@ export default function JobListPage() {
                 className="px-4 py-2 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white rounded-xl transition cursor-pointer"
               >
                 {uploading
-                  ? "Mengunggah..."
+                  ? "Uploading..."
                   : `Upload (${selectedFiles.length}) File`}
               </button>
             </div>
