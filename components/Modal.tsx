@@ -31,6 +31,10 @@ export default function ExportModal({
     window.open(`${baseUrl}/jobs/${jobId}/manual2`, "_blank");
     onClose();
   };
+  const handleExportManual3 = () => {
+    window.open(`${baseUrl}/jobs/${jobId}/manual3`, "_blank");
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
@@ -79,21 +83,27 @@ export default function ExportModal({
         <div className="px-6 pb-6 space-y-2">
           <button
             onClick={handleDownload}
-            className="w-full px-4 py-2.5 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition cursor-pointer"
+            className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200  hover:bg-indigo-700 hover:text-white  rounded-xl shadow-sm transition cursor-pointer"
           >
             Download CSV
           </button>
           <button
             onClick={handleExportManual1}
-            className="w-full px-4 py-2.5 text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl shadow-sm transition cursor-pointer"
+            className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200  hover:bg-indigo-700 hover:text-white  rounded-xl shadow-sm transition cursor-pointer"
           >
             Download Manual Upload
           </button>
           <button
             onClick={handleExportManual2}
-            className="w-full px-4 py-2.5 text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl shadow-sm transition cursor-pointer"
+            className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200  hover:bg-indigo-700 hover:text-white  rounded-xl shadow-sm transition cursor-pointer"
           >
             Download Manual Flag
+          </button>
+          <button
+            onClick={handleExportManual3}
+            className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200  hover:bg-indigo-700 hover:text-white  rounded-xl shadow-sm transition cursor-pointer"
+          >
+            Download Manual Reject
           </button>
         </div>
 

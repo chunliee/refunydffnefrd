@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import ExportModal from "@/components/Modal";
+import OverModal from "@/components/OverModal";
 
 interface JobItem {
   id: string;
@@ -28,6 +29,7 @@ export default function JobListPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [exportJobId, setExportJobId] = useState<string | null>(null);
+  const [overrideJobId, setOverrideJobId] = useState<string | null>(null);
 
   // === State Filter Lengkap ===
   const [search, setSearch] = useState<string>("");
@@ -633,7 +635,7 @@ export default function JobListPage() {
                       <button
                         onClick={() => {
                           if (canManageJob(job)) {
-                            setActiveDetailModal({ type: "Manual", job });
+                            setOverrideJobId(job.id);
                           }
                         }}
                         disabled={!canManageJob(job)}
@@ -833,9 +835,9 @@ export default function JobListPage() {
                 />
                 <div className="flex flex-col items-center justify-center space-y-2">
                   <p className="text-xs font-medium text-slate-700">
-                    Drag & drop file CSV di sini, atau{" "}
+                    Drag & drop CSV file here, or{" "}
                     <span className="text-indigo-600 font-semibold">
-                      browse
+                      Browse
                     </span>
                   </p>
                 </div>
@@ -894,6 +896,13 @@ export default function JobListPage() {
         onClose={() => setExportJobId(null)}
         jobId={exportJobId || ""}
         baseUrl={baseUrl}
+      />
+      <OverModal
+        isOpen={!!overrideJobId}
+        onClose={() => setOverrideJobId(null)}
+        jobId={overrideJobId || ""}
+        baseUrl={baseUrl}
+        onUploadSuccess={fetchJobs}
       />
     </div>
   );
