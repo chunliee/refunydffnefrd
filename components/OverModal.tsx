@@ -26,13 +26,13 @@ export default function OverModal({
 
   // === DOWNLOAD HANDLERS ===
   const handleOveride1 = () => {
-    window.open(`${baseUrl}/jobs/${jobId}/overide1`, "_blank");
+    window.open(`${baseUrl}/jobs/${jobId}/downloadauto`, "_blank");
   };
   const handleOveride2 = () => {
-    window.open(`${baseUrl}/jobs/${jobId}/overide2`, "_blank");
+    window.open(`${baseUrl}/jobs/${jobId}/downloadmanual`, "_blank");
   };
   const handleOveride3 = () => {
-    window.open(`${baseUrl}/jobs/${jobId}/overide3`, "_blank");
+    window.open(`${baseUrl}/jobs/${jobId}/downloadrejected`, "_blank");
   };
 
   // === UPLOAD HANDLERS ===
@@ -118,19 +118,19 @@ export default function OverModal({
               onClick={handleOveride1}
               className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-indigo-700 hover:text-white rounded-xl shadow-sm transition cursor-pointer"
             >
-              Download Override 1
+              Download Auto Checks data
             </button>
             <button
               onClick={handleOveride2}
               className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-indigo-700 hover:text-white rounded-xl shadow-sm transition cursor-pointer"
             >
-              Download Override 2
+              Download Manual Checks data
             </button>
             <button
               onClick={handleOveride3}
               className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-indigo-700 hover:text-white rounded-xl shadow-sm transition cursor-pointer"
             >
-              Download Override 3
+              Download Rejected Data
             </button>
           </div>
 
