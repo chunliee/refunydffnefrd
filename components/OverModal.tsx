@@ -69,15 +69,21 @@ export default function OverModal({
 
     try {
       const formData = new FormData();
-      selectedFiles.forEach((file) => formData.append("files", file));
-      formData.append("job_id", jobId); // opsional, kalau backend butuh
 
-      const res = await fetch(`${baseUrl}/upload/overide/csv`, {
+      // 1. Sesuaikan nama key menjadi "file" (sesuai c.FormFile("file") di backend Go)
+      // Jika upload 1 file CSV:
+      formData.append("file", selectedFiles[0]);
+
+      const res = await fetch(`${baseUrl}/upload/refund/override`, {
+        // 2. URL disesuaikan dengan route Go
         method: "POST",
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Gagal upload file override");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Gagal upload file override");
+      }
 
       setSelectedFiles([]);
       onUploadSuccess?.();
