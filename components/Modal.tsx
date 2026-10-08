@@ -18,8 +18,17 @@ export default function ExportModal({
   if (!isOpen) return null;
 
   const handleDownload = () => {
-    // Membuka endpoint download backend di tab baru/langsung trigger download browser
     window.open(`${baseUrl}/jobs/${jobId}/download`, "_blank");
+    onClose();
+  };
+
+  const handleExportManual1 = () => {
+    window.open(`${baseUrl}/jobs/${jobId}/manual1`, "_blank");
+    onClose();
+  };
+
+  const handleExportManual2 = () => {
+    window.open(`${baseUrl}/jobs/${jobId}/manual2`, "_blank");
     onClose();
   };
 
@@ -58,7 +67,7 @@ export default function ExportModal({
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-800">
-              Download File CSV Refund
+              Choose an export option
             </p>
             <p className="text-xs text-slate-500 mt-1">
               Job ID: <span className="font-mono text-slate-700">{jobId}</span>
@@ -66,19 +75,35 @@ export default function ExportModal({
           </div>
         </div>
 
-        {/* Footer Actions */}
+        {/* Action Buttons — Stack */}
+        <div className="px-6 pb-6 space-y-2">
+          <button
+            onClick={handleDownload}
+            className="w-full px-4 py-2.5 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition cursor-pointer"
+          >
+            Download CSV
+          </button>
+          <button
+            onClick={handleExportManual1}
+            className="w-full px-4 py-2.5 text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl shadow-sm transition cursor-pointer"
+          >
+            Download Manual 1
+          </button>
+          <button
+            onClick={handleExportManual2}
+            className="w-full px-4 py-2.5 text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl shadow-sm transition cursor-pointer"
+          >
+            Download Manual 2
+          </button>
+        </div>
+
+        {/* Footer */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 bg-slate-50 border-t border-slate-100">
           <button
             onClick={onClose}
             className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200/60 rounded-xl transition cursor-pointer"
           >
             Batal
-          </button>
-          <button
-            onClick={handleDownload}
-            className="px-4 py-2 text-xs font-medium bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-sm transition cursor-pointer"
-          >
-            Download CSV
           </button>
         </div>
       </div>

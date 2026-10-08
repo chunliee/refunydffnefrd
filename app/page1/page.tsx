@@ -492,9 +492,9 @@ export default function JobListPage() {
                 <th className="py-3.5 px-4 font-semibold">Date</th>
                 <th className="py-3.5 px-4 font-semibold">Stats</th>
                 <th className="py-3.5 px-4 font-semibold">API Status</th>
-                <th className="py-3.5 px-4 font-semibold">VCR Status</th>
-                <th className="py-3.5 px-4 font-semibold">PNR Status</th>
-                <th className="py-3.5 px-4 font-semibold">Manual Status</th>
+                <th className="py-3.5 px-4 font-semibold">VCR HISTORY</th>
+                <th className="py-3.5 px-4 font-semibold">PNR HISTORY</th>
+                <th className="py-3.5 px-4 font-semibold">Override</th>
                 <th className="py-3.5 px-4 font-semibold">Export</th>
                 <th className="py-3.5 px-4 font-semibold">Status</th>
               </tr>
