@@ -87,13 +87,13 @@ export default function ExportModal({
             onClick={handleExportManual1}
             className="w-full px-4 py-2.5 text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl shadow-sm transition cursor-pointer"
           >
-            Download Manual 1
+            Download Manual Upload
           </button>
           <button
             onClick={handleExportManual2}
             className="w-full px-4 py-2.5 text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-xl shadow-sm transition cursor-pointer"
           >
-            Download Manual 2
+            Download Manual Flag
           </button>
         </div>
 
@@ -103,7 +103,7 @@ export default function ExportModal({
             onClick={onClose}
             className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200/60 rounded-xl transition cursor-pointer"
           >
-            Batal
+            Cancel
           </button>
         </div>
       </div>
