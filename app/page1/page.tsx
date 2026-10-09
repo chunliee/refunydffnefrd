@@ -16,7 +16,7 @@ interface JobItem {
   processed_cnt: number;
   rejected_records: number;
   manual_records: number;
-  pending_records: number;
+  edited_records: number;
   api_status: string;
   vcr_status: string;
   pnr_status: string;
@@ -573,9 +573,9 @@ export default function JobListPage() {
                           </strong>
                         </span>
                         <span>
-                          Pending:{" "}
+                          Edited:{" "}
                           <strong className="text-blue-600">
-                            {job.pending_records ?? 0}
+                            {job.edited_records ?? 0}
                           </strong>
                         </span>
                       </div>
