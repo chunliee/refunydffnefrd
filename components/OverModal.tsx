@@ -223,19 +223,6 @@ export default function OverModal({
                     : "bg-amber-50 border-amber-200 text-amber-700"
                 }`}
               >
-                {/* <svg
-                  className="w-4 h-4 shrink-0"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3L13.74 4a2 2 0 00-3.48 0L3.33 16a2 2 0 001.74 3z"
-                  />
-                </svg> */}
                 <span className="flex-1">{notice.message}</span>
                 <button
                   onClick={() => setNotice(null)}
