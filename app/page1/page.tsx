@@ -53,7 +53,17 @@ export default function JobListPage() {
     type: "VCR" | "PNR" | "Manual";
     job: JobItem;
   } | null>(null);
-
+  const statusColors: Record<string, string> = {
+    PENDING: "bg-amber-100 text-amber-800",
+    PROCESSING: "bg-blue-100 text-blue-800",
+    PAID: "bg-emerald-100 text-emerald-800",
+    "API FETCHED": "bg-cyan-100 text-cyan-800",
+    INPROGRESS: "bg-indigo-100 text-indigo-800",
+    COMPLETED: "bg-green-100 text-green-800",
+    "WAITING PAYMENT": "bg-orange-100 text-orange-800",
+    FAILED: "bg-red-100 text-red-800",
+    UNKNOWN: "bg-gray-100 text-gray-800",
+  };
   const fileInputRef = useRef<HTMLInputElement>(null);
   const detailFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -662,9 +672,7 @@ export default function JobListPage() {
                     <td className="py-3.5 px-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                          job.status === "COMPLETED"
-                            ? "bg-emerald-100 text-emerald-800"
-                            : "bg-amber-100 text-amber-800"
+                          statusColors[job.status] ?? statusColors.UNKNOWN
                         }`}
                       >
                         {job.status || "UNKNOWN"}
