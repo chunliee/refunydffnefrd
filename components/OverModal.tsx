@@ -111,6 +111,15 @@ export default function OverModal({
       "Rejected data",
     );
 
+  const handleOveride4 = () =>
+    handleDownload(
+      "downloadmanualemd",
+      `manual_checks_emd_job_${jobId}.csv`,
+      "Manual Checks EMD data",
+    );
+  const handleOveride5 = () =>
+    handleDownload("downloadctrl", `ctrl_job_${jobId}.csv`, "CTRL cpn data");
+
   // === UPLOAD HANDLERS ===
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -208,10 +217,22 @@ export default function OverModal({
               Download Manual Checks data
             </button>
             <button
+              onClick={handleOveride4}
+              className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-indigo-700 hover:text-white rounded-xl shadow-sm transition cursor-pointer"
+            >
+              Download Manual Checks EMD
+            </button>
+            <button
               onClick={handleOveride3}
               className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-indigo-700 hover:text-white rounded-xl shadow-sm transition cursor-pointer"
             >
               Download Rejected Data
+            </button>
+            <button
+              onClick={handleOveride5}
+              className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-indigo-700 hover:text-white rounded-xl shadow-sm transition cursor-pointer"
+            >
+              Download CTRL data
             </button>
 
             {/* === INLINE NOTICE (pengganti alert) === */}
