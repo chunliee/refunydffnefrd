@@ -215,7 +215,7 @@ export default function StatPieChart() {
             </span>
           </div>
 
-          <div className="h-64">
+          <div className="h-54">
             {chartData.length === 0 || total === 0 ? (
               <div className="flex h-full items-center justify-center text-sm text-gray-400">
                 Tidak ada data.
