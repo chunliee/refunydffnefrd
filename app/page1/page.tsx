@@ -57,7 +57,7 @@ export default function JobListPage() {
   } | null>(null);
   const statusColors: Record<string, string> = {
     PENDING: "bg-amber-100 text-amber-800",
-    PROCESSING: "bg-blue-100 text-blue-800",
+    PROCESSING: "bg-yellow-400 text-blue-800",
     PAID: "bg-emerald-100 text-emerald-800",
     "API FETCHED": "bg-cyan-100 text-cyan-800",
     INPROGRESS: "bg-indigo-100 text-indigo-800",
@@ -75,6 +75,7 @@ export default function JobListPage() {
       : "";
   const [userRole, setUserRole] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
+  const [staffName, setStaffName] = useState<string>("");
 
   useEffect(() => {
     const auth = Cookies.get("user_auth");
@@ -83,6 +84,7 @@ export default function JobListPage() {
         const parsed = JSON.parse(auth);
         setUserRole(parsed.role);
         setUserName(parsed.agent);
+        setStaffName(parsed.name);
       } catch (err) {
         console.error("Gagal parse auth:", err);
       }
@@ -281,6 +283,7 @@ export default function JobListPage() {
 
     // 2. Tambahkan nama user dari state userName (diambil dari cookies)
     formData.append("uploaded_by", userName || "Admin/System");
+    formData.append("staff_name", staffName || "Admin/System");
 
     fetch(`${baseUrl}/upload/refund/csv`, {
       method: "POST",
