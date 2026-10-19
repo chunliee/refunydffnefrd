@@ -126,7 +126,7 @@ export default function TrendRefundValues() {
           <h3 className="text-sm font-semibold text-gray-700">
             Refund Trend — Last {days} Days
           </h3>
-          <span className="text-xs text-gray-400">excl. rejected</span>
+          <span className="text-xs text-gray-400"></span>
         </div>
 
         <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
