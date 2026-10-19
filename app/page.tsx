@@ -17,16 +17,13 @@ export default function Home() {
 
       {/* Layout: kiri chart, kanan export */}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr_320px]">
-        {/* Kiri: 3 chart */}
+        {/* Kiri: chart-chart */}
         <div className="space-y-6">
-          {/* Baris 1: Pie full width (atau bisa dipasangkan nanti) */}
+          {/* Baris 1: Pie full width */}
           <StatPieChart />
 
-          {/* Baris 2: 2 line chart side by side */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <TrendRefundValues />
-            <TrendTicketCount />
-          </div>
+          {/* Baris 2: Trend Refund full width (samain size sama Pie) */}
+          <TrendRefundValues />
         </div>
 
         {/* Kanan: Export panel (sticky) */}

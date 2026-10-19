@@ -17,6 +17,8 @@ interface JobItem {
   rejected_records: number;
   manual_records: number;
   edited_records: number;
+  auto_records: number;
+  ctrl_records: number;
   api_status: string;
   vcr_status: string;
   pnr_status: string;
@@ -571,6 +573,12 @@ export default function JobListPage() {
                           </strong>
                         </span>
                         <span>
+                          Auto:{" "}
+                          <strong className="text-green-600">
+                            {job.auto_records ?? 0}
+                          </strong>
+                        </span>
+                        <span>
                           Rejected:{" "}
                           <strong className="text-red-600">
                             {job.rejected_records ?? 0}
@@ -586,6 +594,12 @@ export default function JobListPage() {
                           Edited:{" "}
                           <strong className="text-blue-600">
                             {job.edited_records ?? 0}
+                          </strong>
+                        </span>
+                        <span>
+                          CTRL:{" "}
+                          <strong className="text-yellow-600">
+                            {job.ctrl_records ?? 0}
                           </strong>
                         </span>
                       </div>
