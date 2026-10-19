@@ -53,7 +53,7 @@ const SECTIONS: { key: SectionKey; label: string }[] = [
   { key: "processing_distribution", label: "Processing" },
   { key: "default_vs_edited", label: "Default vs Edited" },
   { key: "ticket_vs_emd", label: "Ticket vs EMD" },
-  { key: "refund_by_uploader", label: "By Uploader" },
+  { key: "refund_by_uploader", label: "Total data by User" },
 ];
 
 interface LegendEntry {
