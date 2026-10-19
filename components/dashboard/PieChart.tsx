@@ -28,7 +28,7 @@ const RANGE_OPTIONS = [14, 31, 90, 180, 365];
 const PALETTES: Record<string, string[]> = {
   processing_distribution: ["#3b82f6", "#10b981", "#ef4444", "#f59e0b"],
   default_vs_edited: ["#64748b", "#f97316"],
-  ticket_vs_emd: ["#0ea5e9", "#a855f7"],
+  ticket_vs_emd: ["#0ea5e9", "#9B870C"],
   refund_by_uploader: [
     "#6366f1",
     "#ec4899",
