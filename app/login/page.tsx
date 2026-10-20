@@ -25,14 +25,6 @@ const admin = [
 
 const VALID_USERS = [
   {
-    id: "260284",
-    username: "260284",
-    password: "goyim",
-    name: "Admin",
-    agent: "dev",
-    role: "admin",
-  },
-  {
     id: "sagoyim",
     username: "sagoyim",
     password: "123",

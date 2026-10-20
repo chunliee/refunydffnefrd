@@ -218,7 +218,7 @@ export default function StatPieChart() {
           <div className="h-54">
             {chartData.length === 0 || total === 0 ? (
               <div className="flex h-full items-center justify-center text-sm text-gray-400">
-                Tidak ada data.
+                No data available.
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
