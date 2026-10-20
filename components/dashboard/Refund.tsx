@@ -177,7 +177,7 @@ export default function TrendRefundValues() {
       <div className="h-72">
         {loading ? (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">
-            Memuat data...
+            Loading...
           </div>
         ) : error ? (
           <div className="flex h-full items-center justify-center text-sm text-red-500">
@@ -185,7 +185,7 @@ export default function TrendRefundValues() {
           </div>
         ) : data.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">
-            Tidak ada data pada rentang ini.
+            No data available
           </div>
         ) : activeMetrics.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm text-gray-400">

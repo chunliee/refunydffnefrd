@@ -197,7 +197,7 @@ export default function StatPieChart() {
       {/* Content */}
       {loading ? (
         <div className="flex h-[340px] items-center justify-center text-sm text-gray-400">
-          Memuat data...
+          Loading...
         </div>
       ) : error ? (
         <div className="flex h-[340px] items-center justify-center text-sm text-red-500">
@@ -205,7 +205,7 @@ export default function StatPieChart() {
         </div>
       ) : !data ? (
         <div className="flex h-[340px] items-center justify-center text-sm text-gray-400">
-          Tidak ada data.
+          There is no data.
         </div>
       ) : (
         <div>
