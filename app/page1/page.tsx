@@ -18,6 +18,8 @@ interface JobItem {
   manual_records: number;
   edited_records: number;
   auto_records: number;
+  paid_records: number;
+  not_paid_records: number;
   ctrl_records: number;
   api_status: string;
   vcr_status: string;
@@ -603,6 +605,18 @@ export default function JobListPage() {
                           CTRL:{" "}
                           <strong className="text-yellow-600">
                             {job.ctrl_records ?? 0}
+                          </strong>
+                        </span>
+                        <span>
+                          PAID:{" "}
+                          <strong className="text-green-600">
+                            {job.paid_records ?? 0}
+                          </strong>
+                        </span>
+                        <span>
+                          Pending Payment:{" "}
+                          <strong className="text-red-600">
+                            {job.not_paid_records ?? 0}
                           </strong>
                         </span>
                       </div>
