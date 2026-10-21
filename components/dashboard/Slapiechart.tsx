@@ -251,7 +251,7 @@ export default function SlaBarChart() {
         "Overdue (%)": pct(d.overdue, d.total_paid || d.ontime + d.overdue),
       }));
       const series = [
-        { key: "Ontime", fill: "#9D00FF", kind: "ontime" as const },
+        { key: "Ontime", fill: "#10b981", kind: "ontime" as const },
         { key: "Overdue", fill: OVERDUE_COLOR, kind: "overdue" as const },
       ];
       return { chartData, series, isPercent: viewMode === "percent" };
@@ -403,7 +403,7 @@ export default function SlaBarChart() {
               <XAxis
                 dataKey="month_label"
                 tick={{ fontSize: 11, fill: "##BF40BF" }}
-                axisLine={{ stroke: "#BF40BF" }}
+                axisLine={{ stroke: "##BF40BF" }}
                 tickLine={false}
               />
               <YAxis
