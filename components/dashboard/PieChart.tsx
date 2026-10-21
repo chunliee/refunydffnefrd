@@ -4,7 +4,10 @@
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
-const BASE_URL = "http://localhost:8084/chart/pie";
+const BASE_URL =
+  typeof window !== "undefined"
+    ? `http://${window.location.hostname}:8084/chart/pie`
+    : "";
 
 type PieItem = {
   label: string;
@@ -20,6 +23,8 @@ type PieResponse = {
     default_vs_edited: PieItem[];
     ticket_vs_emd: PieItem[];
     refund_by_uploader: PieItem[];
+    paid_vs_not_paid: PieItem[];
+    sla_paid: PieItem[];
   };
 };
 
@@ -41,19 +46,25 @@ const PALETTES: Record<string, string[]> = {
     "#a3e635",
     "#d946ef",
   ],
+  paid_vs_not_paid: ["#10b981", "#f59e0b"],
+  sla_paid: ["#10b981", "#ef4444"],
 };
 
 type SectionKey =
   | "processing_distribution"
   | "default_vs_edited"
   | "ticket_vs_emd"
-  | "refund_by_uploader";
+  | "refund_by_uploader"
+  | "paid_vs_not_paid"
+  | "sla_paid";
 
 const SECTIONS: { key: SectionKey; label: string }[] = [
   { key: "processing_distribution", label: "Processing" },
   { key: "default_vs_edited", label: "Default vs Edited" },
   { key: "ticket_vs_emd", label: "Ticket vs EMD" },
   { key: "refund_by_uploader", label: "Total data by User" },
+  { key: "paid_vs_not_paid", label: "Paid vs Pending" },
+  { key: "sla_paid", label: "SLA Paid" },
 ];
 
 interface LegendEntry {
@@ -153,8 +164,8 @@ export default function StatPieChart() {
   return (
     <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
       {/* Header + Range Filter */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-baseline gap-2">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-1">
+        <div className="flex items-baseline gap-1">
           <h3 className="text-sm font-semibold text-gray-700">
             Distribution — Last {days} Days
           </h3>
@@ -183,7 +194,7 @@ export default function StatPieChart() {
           <button
             key={s.key}
             onClick={() => setActiveSection(s.key)}
-            className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium whitespace-nowrap transition ${
+            className={`flex-1 rounded-md px-1 py-1.5 text-xs font-medium whitespace-nowrap transition ${
               activeSection === s.key
                 ? "bg-white text-orange-600 shadow-sm"
                 : "text-gray-500 hover:text-gray-700"

@@ -13,7 +13,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const BASE_URL = "http://localhost:8084/chart/nominal";
+const BASE_URL =
+  typeof window !== "undefined"
+    ? `http://${window.location.hostname}:8084/chart/nominal`
+    : "";
 
 type ChartDataPoint = {
   date: string;

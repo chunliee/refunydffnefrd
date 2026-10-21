@@ -14,7 +14,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const BASE_URL = "http://localhost:8084/chart/bar";
+const BASE_URL =
+  typeof window !== "undefined"
+    ? `http://${window.location.hostname}:8084/chart/bar`
+    : "";
 
 type MonthlyPoint = {
   month: string;
@@ -403,7 +406,7 @@ export default function SlaBarChart() {
               <XAxis
                 dataKey="month_label"
                 tick={{ fontSize: 11, fill: "##BF40BF" }}
-                axisLine={{ stroke: "##BF40BF" }}
+                axisLine={{ stroke: "## BF40BF" }}
                 tickLine={false}
               />
               <YAxis
