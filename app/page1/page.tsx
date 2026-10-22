@@ -20,6 +20,7 @@ interface JobItem {
   auto_records: number;
   paid_records: number;
   not_paid_records: number;
+  fetched_records: number;
   ctrl_records: number;
   api_status: string;
   vcr_status: string;
@@ -593,6 +594,12 @@ export default function JobListPage() {
                           Manual:{" "}
                           <strong className="text-amber-600">
                             {job.manual_records ?? 0}
+                          </strong>
+                        </span>
+                        <span>
+                          Fetched:{" "}
+                          <strong className="text-amber-600">
+                            {job.fetched_records ?? 0}
                           </strong>
                         </span>
                         <span>
