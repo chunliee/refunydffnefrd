@@ -47,7 +47,6 @@ type BarResponse = {
 };
 
 const VALID_USERS: { agent: string; name: string }[] = [
-  { agent: "dev", name: "Admin" },
   { agent: "JKTBA0", name: "TAUFIK" },
   { agent: "JKTBAW", name: "Alif" },
   { agent: "JKTBML", name: "MIA" },
