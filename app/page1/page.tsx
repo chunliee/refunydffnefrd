@@ -35,6 +35,8 @@ export default function JobListPage() {
   const [error, setError] = useState<string | null>(null);
   const [exportJobId, setExportJobId] = useState<string | null>(null);
   const [overrideJobId, setOverrideJobId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<JobItem | null>(null);
+  const [deleting, setDeleting] = useState<boolean>(false);
 
   // === State Filter Lengkap ===
   const [search, setSearch] = useState<string>("");
@@ -68,6 +70,7 @@ export default function JobListPage() {
     "WAITING PAYMENT": "bg-orange-100 text-orange-800",
     FAILED: "bg-red-100 text-red-800",
     UNKNOWN: "bg-gray-100 text-gray-800",
+    DELETED: "bg-red-700 text-white",
   };
   const fileInputRef = useRef<HTMLInputElement>(null);
   const detailFileInputRef = useRef<HTMLInputElement>(null);
@@ -254,6 +257,35 @@ export default function JobListPage() {
     }
   };
 
+  const openDeleteModal = (job: JobItem) => {
+    if (!canManageJob(job)) return;
+    setDeleteTarget(job);
+  };
+
+  const handleDeleteJob = async () => {
+    if (!deleteTarget) return;
+
+    setDeleting(true);
+    try {
+      const response = await fetch(
+        `${baseUrl}/jobs/${deleteTarget.id}/delete`,
+        {
+          method: "GET",
+        },
+      );
+
+      if (!response.ok) throw new Error("Gagal menghapus job");
+
+      // Hapus dari state lokal agar UI langsung update
+      setJobs((prev) => prev.filter((j) => j.id !== deleteTarget.id));
+      setDeleteTarget(null);
+      fetchJobs();
+    } catch (error: any) {
+      alert(`Error: ${error.message}`);
+    } finally {
+      setDeleting(false);
+    }
+  };
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
@@ -517,6 +549,9 @@ export default function JobListPage() {
                 <th className="py-3.5 px-4 font-semibold">Override</th>
                 <th className="py-3.5 px-4 font-semibold">Export</th>
                 <th className="py-3.5 px-4 font-semibold">Status</th>
+                {isAdmin && (
+                  <th className="py-3.5 px-4 font-semibold">Action</th>
+                )}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-600">
@@ -716,6 +751,30 @@ export default function JobListPage() {
                         {job.status || "UNKNOWN"}
                       </span>
                     </td>
+                    {isAdmin && (
+                      <td className="py-3.5 px-4">
+                        <button
+                          onClick={() => openDeleteModal(job)}
+                          title="Hapus job ini"
+                          className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-[11px] font-medium transition bg-red-50 hover:bg-red-100 text-red-600 cursor-pointer"
+                        >
+                          <svg
+                            className="w-3.5 h-3.5 mr-1"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                            />
+                          </svg>
+                          Delete
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))
               )}
@@ -837,6 +896,122 @@ export default function JobListPage() {
                   }}
                 />
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden border border-slate-100">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+              <h3 className="font-bold text-slate-900 text-sm">
+                Confirm delete job
+              </h3>
+              <button
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+                className="text-slate-400 hover:text-slate-600 transition cursor-pointer disabled:opacity-50"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {/* Warning Icon */}
+              <div className="flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+                  <svg
+                    className="w-6 h-6 text-red-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              <div className="text-center space-y-1">
+                <p className="text-sm font-semibold text-slate-900">
+                  Are you sure you want to delete this job?
+                </p>
+                <p className="text-xs text-slate-500">
+                  This action cannot be undone
+                </p>
+              </div>
+
+              {/* Detail Job */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1.5 text-xs">
+                <div className="flex justify-between gap-2">
+                  <span className="text-slate-500">Job ID</span>
+                  <span className="font-mono font-semibold text-slate-800 truncate">
+                    {deleteTarget.id}
+                  </span>
+                </div>
+                <div className="flex justify-between gap-2">
+                  <span className="text-slate-500">File</span>
+                  <span className="font-medium text-slate-800 truncate text-right max-w-[60%]">
+                    {deleteTarget.file_name || "-"}
+                  </span>
+                </div>
+                <div className="flex justify-between gap-2">
+                  <span className="text-slate-500">Uploaded By</span>
+                  <span className="font-medium text-slate-800">
+                    {deleteTarget.uploaded_by || "Admin/System"}
+                  </span>
+                </div>
+                <div className="flex justify-between gap-2">
+                  <span className="text-slate-500">Type</span>
+                  <span className="font-medium text-slate-800">
+                    {deleteTarget.refund_type || "B2B"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 px-6 py-4 bg-slate-50 border-t border-slate-100">
+              <button
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+                className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-200 rounded-xl transition cursor-pointer disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteJob}
+                disabled={deleting}
+                className="inline-flex items-center px-4 py-2 text-xs font-medium bg-red-600 hover:bg-red-700 disabled:bg-slate-300 text-white rounded-xl transition cursor-pointer"
+              >
+                {deleting ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Menghapus...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-3.5 h-3.5 mr-1.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                    Delete
+                  </>
+                )}
+              </button>
             </div>
           </div>
         </div>
