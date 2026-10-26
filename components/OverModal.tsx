@@ -214,7 +214,7 @@ export default function OverModal({
               onClick={handleOveride2}
               className="w-full px-4 py-2.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 hover:bg-indigo-700 hover:text-white rounded-xl shadow-sm transition cursor-pointer"
             >
-              Download Manual Checks data
+              Download Manual Checks Tickets
             </button>
             <button
               onClick={handleOveride4}
