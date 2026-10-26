@@ -102,20 +102,20 @@ export default function OverModal({
     handleDownload(
       "downloadmanual",
       `manual_checks_job_${jobId}.csv`,
-      "Manual Checks data",
+      "Manual Checks Tickets",
     );
   const handleOveride3 = () =>
     handleDownload(
       "downloadrejected",
       `rejected_job_${jobId}.csv`,
-      "Rejected data",
+      "Rejected Data",
     );
 
   const handleOveride4 = () =>
     handleDownload(
       "downloadmanualemd",
       `manual_checks_emd_job_${jobId}.csv`,
-      "Manual Checks EMD data",
+      "Manual Checks EMD Data",
     );
   const handleOveride5 = () =>
     handleDownload("downloadctrl", `ctrl_job_${jobId}.csv`, "CTRL cpn data");
