@@ -5,6 +5,7 @@ import { useState } from "react";
 
 export default function ExportPanel() {
   const [form, setForm] = useState({
+    ids: "", // multi-line, 1 ObjectID per baris
     tickets: "", // multi-line, 1 value per baris
     pnrs: "", // multi-line, 1 value per baris
     from: "",
@@ -12,28 +13,20 @@ export default function ExportPanel() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [preview, setPreview] = useState<{ tickets: string[]; pnrs: string[] }>(
-    {
-      tickets: [],
-      pnrs: [],
-    },
-  );
+  const [preview, setPreview] = useState<{
+    ids: string[];
+    tickets: string[];
+    pnrs: string[];
+  }>({
+    ids: [],
+    tickets: [],
+    pnrs: [],
+  });
 
   const baseUrl =
     typeof window !== "undefined"
       ? `http://${window.location.hostname}:8084`
       : "";
-
-  const update = (k: keyof typeof form, v: string) => {
-    setForm((f) => ({ ...f, [k]: v }));
-    // Update preview
-    if (k === "tickets") setPreview((p) => ({ ...p, tickets: parseLines(v) }));
-    if (k === "pnrs")
-      setPreview((p) => ({
-        ...p,
-        pnrs: parseLines(v).map((u) => u.toUpperCase()),
-      }));
-  };
 
   // Parse: split by newline, trim, buang kosong, dedupe
   const parseLines = (raw: string): string[] => {
@@ -44,23 +37,58 @@ export default function ExportPanel() {
     return Array.from(new Set(arr)); // dedupe
   };
 
+  const update = (k: keyof typeof form, v: string) => {
+    setForm((f) => ({ ...f, [k]: v }));
+    // Update preview
+    if (k === "ids") setPreview((p) => ({ ...p, ids: parseLines(v) }));
+    if (k === "tickets") setPreview((p) => ({ ...p, tickets: parseLines(v) }));
+    if (k === "pnrs")
+      setPreview((p) => ({
+        ...p,
+        pnrs: parseLines(v).map((u) => u.toUpperCase()),
+      }));
+  };
+
   const handleExport = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
+      const ids = parseLines(form.ids);
       const tickets = parseLines(form.tickets);
       const pnrs = parseLines(form.pnrs).map((s) => s.toUpperCase());
 
-      if (tickets.length === 0 && pnrs.length === 0 && !form.from && !form.to) {
+      if (
+        ids.length === 0 &&
+        tickets.length === 0 &&
+        pnrs.length === 0 &&
+        !form.from &&
+        !form.to
+      ) {
         throw new Error(
-          "Isi minimal salah satu filter (Ticket / PNR / Tanggal).",
+          "Isi minimal salah satu filter (_id / Ticket / PNR / Tanggal).",
         );
       }
 
+      // Validasi format ObjectID (24 hex chars)
+      const invalidIds = ids.filter((id) => !/^[a-fA-F0-9]{24}$/.test(id));
+      if (invalidIds.length > 0) {
+        throw new Error(
+          `Format _id tidak valid (harus 24 hex): ${invalidIds
+            .slice(0, 3)
+            .join(", ")}${invalidIds.length > 3 ? ", ..." : ""}`,
+        );
+      }
+
+      // Guard limit (backend max 1000 per filter)
+      if (ids.length > 1000 || tickets.length > 1000 || pnrs.length > 1000) {
+        throw new Error("Maksimal 1000 item per filter.");
+      }
+
       const params = new URLSearchParams();
-      // Kirim sebagai comma-separated (backend akan split)
+      // Backend baca query "id" (fallback ke "_id")
+      if (ids.length) params.append("id", ids.join(","));
       if (tickets.length) params.append("ticket_no", tickets.join(","));
       if (pnrs.length) params.append("pnr_code", pnrs.join(","));
       if (form.from) params.append("start_date", form.from);
@@ -101,8 +129,8 @@ export default function ExportPanel() {
   };
 
   const reset = () => {
-    setForm({ tickets: "", pnrs: "", from: "", to: "" });
-    setPreview({ tickets: [], pnrs: [] });
+    setForm({ ids: "", tickets: "", pnrs: "", from: "", to: "" });
+    setPreview({ ids: [], tickets: [], pnrs: [] });
     setError(null);
   };
 
@@ -114,6 +142,29 @@ export default function ExportPanel() {
       </p>
 
       <form onSubmit={handleExport} className="space-y-4">
+        {/* _ID (Mongo ObjectID) */}
+        <div>
+          <div className="mb-1 flex items-center justify-between">
+            <label className="block text-xs font-medium text-gray-600">
+              _id (ObjectID) <span className="text-gray-400"></span>
+            </label>
+            {preview.ids.length > 0 && (
+              <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-semibold text-orange-700">
+                {preview.ids.length} item
+              </span>
+            )}
+          </div>
+          <textarea
+            rows={3}
+            // placeholder={
+            //   "507f1f77bcf86cd799439011\n507f191e810c19729de860ea\n...paste dari Excel"
+            // }
+            value={form.ids}
+            onChange={(e) => update("ids", e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+          />
+        </div>
+
         {/* TICKETS */}
         <div>
           <div className="mb-1 flex items-center justify-between">
@@ -128,7 +179,6 @@ export default function ExportPanel() {
           </div>
           <textarea
             rows={4}
-            // placeholder={"126-1234567890\n126-0987654321\n...paste dari Excel"}
             value={form.tickets}
             onChange={(e) => update("tickets", e.target.value)}
             className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-xs outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
