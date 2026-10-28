@@ -604,15 +604,15 @@ export default function JobListPage() {
                         <span>
                           Total:{" "}
                           <strong className="text-slate-900">
-                            {job.total_records ?? 0}
+                            {job.processed_cnt ?? 0}
                           </strong>
                         </span>
-                        <span>
+                        {/* <span>
                           Processed:{" "}
                           <strong className="text-emerald-600">
                             {job.processed_cnt ?? 0}
                           </strong>
-                        </span>
+                        </span> */}
                         <span>
                           Auto:{" "}
                           <strong className="text-green-600">
