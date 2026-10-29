@@ -22,6 +22,7 @@ interface JobItem {
   not_paid_records: number;
   fetched_records: number;
   ctrl_records: number;
+  fbnf_records: number;
   api_status: string;
   vcr_status: string;
   pnr_status: string;
@@ -659,6 +660,12 @@ export default function JobListPage() {
                           Pending Payment:{" "}
                           <strong className="text-red-600">
                             {job.not_paid_records ?? 0}
+                          </strong>
+                        </span>
+                        <span>
+                          FB Not Found:{" "}
+                          <strong className="text-red-600">
+                            {job.fbnf_records ?? 0}
                           </strong>
                         </span>
                       </div>
