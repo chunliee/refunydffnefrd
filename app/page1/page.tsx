@@ -269,15 +269,14 @@ export default function JobListPage() {
     setDeleting(true);
     try {
       const response = await fetch(
-        `${baseUrl}/jobs/${deleteTarget.id}/delete`,
+        `${baseUrl}/jobs/${deleteTarget.id}/deletejob`, // ← diubah dari /delete ke /deletejob
         {
-          method: "GET",
+          method: "DELETE", // ← diubah dari GET ke DELETE
         },
       );
 
       if (!response.ok) throw new Error("Gagal menghapus job");
 
-      // Hapus dari state lokal agar UI langsung update
       setJobs((prev) => prev.filter((j) => j.id !== deleteTarget.id));
       setDeleteTarget(null);
       fetchJobs();
@@ -550,9 +549,7 @@ export default function JobListPage() {
                 <th className="py-3.5 px-4 font-semibold">Override</th>
                 <th className="py-3.5 px-4 font-semibold">Export</th>
                 <th className="py-3.5 px-4 font-semibold">Status</th>
-                {isAdmin && (
-                  <th className="py-3.5 px-4 font-semibold">Action</th>
-                )}
+                <th className="py-3.5 px-4 font-semibold">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-600">
@@ -758,30 +755,28 @@ export default function JobListPage() {
                         {job.status || "UNKNOWN"}
                       </span>
                     </td>
-                    {isAdmin && (
-                      <td className="py-3.5 px-4">
-                        <button
-                          onClick={() => openDeleteModal(job)}
-                          title="Hapus job ini"
-                          className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-[11px] font-medium transition bg-red-50 hover:bg-red-100 text-red-600 cursor-pointer"
+                    <td className="py-3.5 px-4">
+                      <button
+                        onClick={() => openDeleteModal(job)}
+                        title="Hapus job ini"
+                        className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg text-[11px] font-medium transition bg-red-50 hover:bg-red-100 text-red-600 cursor-pointer"
+                      >
+                        <svg
+                          className="w-3.5 h-3.5 mr-1"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
                         >
-                          <svg
-                            className="w-3.5 h-3.5 mr-1"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                            />
-                          </svg>
-                          Delete
-                        </button>
-                      </td>
-                    )}
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                        Delete
+                      </button>
+                    </td>
                   </tr>
                 ))
               )}
