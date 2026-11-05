@@ -23,6 +23,7 @@ interface JobItem {
   fetched_records: number;
   ctrl_records: number;
   fbnf_records: number;
+  usedfbnf_records: number;
   api_status: string;
   vcr_status: string;
   pnr_status: string;
@@ -663,6 +664,12 @@ export default function JobListPage() {
                           FB Not Found:{" "}
                           <strong className="text-red-600">
                             {job.fbnf_records ?? 0}
+                          </strong>
+                        </span>
+                        <span>
+                          Used FB Not Found:{" "}
+                          <strong className="text-red-600">
+                            {job.usedfbnf_records ?? 0}
                           </strong>
                         </span>
                       </div>
