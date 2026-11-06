@@ -537,7 +537,7 @@ export default function JobListPage() {
         <div className="overflow-x-auto w-full">
           <table className="w-full border-collapse text-left text-xs whitespace-nowrap">
             <thead>
-              <tr className="bg-slate-50/70 border-b border-slate-200 text-indigo-600 uppercase tracking-wider text-[11px]">
+              <tr className="bg-slate-50/70 border-b border-slate-200 text-indigo-600 uppercase tracking-wider text-[11px] text-center">
                 <th className="py-3.5 px-4 font-semibold">Job ID</th>
                 <th className="py-3.5 px-4 font-semibold">Type</th>
                 <th className="py-3.5 px-4 font-semibold">File Name</th>
@@ -593,9 +593,19 @@ export default function JobListPage() {
                     <td className="py-3.5 px-4 text-slate-600">
                       {job.uploaded_by || "Admin/System"}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-500">
+                    <td className="py-3.5 px-4 text-slate-500 font-bold">
                       {job.created_at
-                        ? new Date(job.created_at).toLocaleDateString("id-ID")
+                        ? new Date(job.created_at)
+                            .toLocaleString("en-GB", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: false,
+                              timeZone: "Asia/Jakarta",
+                            })
+                            .replace(",", "")
                         : "-"}
                     </td>
                     <td className="py-3.5 px-4 font-mono text-[11px] text-slate-600">
