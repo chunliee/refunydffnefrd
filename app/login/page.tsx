@@ -33,6 +33,14 @@ const VALID_USERS = [
     role: "admin",
   },
   {
+    id: "test",
+    username: "test",
+    password: "test",
+    name: "test",
+    agent: "test",
+    role: "test",
+  },
+  {
     id: "150271",
     username: "150271",
     password: "789ew",

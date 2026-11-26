@@ -207,7 +207,7 @@ export default function ExportPanel() {
         </div>
 
         {/* DATE RANGE */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-3">
           <div>
             <label className="mb-1 block text-xs font-medium text-gray-600">
               Start Date
@@ -216,18 +216,19 @@ export default function ExportPanel() {
               type="date"
               value={form.from}
               onChange={(e) => update("from", e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+              className="block w-full min-w-0 appearance-none box-border rounded-md border border-gray-300 bg-white px-3 py-2 text-xs outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
             />
           </div>
+
           <div>
             <label className="mb-1 block text-xs font-medium text-gray-600">
               To Date
             </label>
             <input
               type="date"
-              value={form.to}
-              onChange={(e) => update("to", e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+              value={form.from}
+              onChange={(e) => update("from", e.target.value)}
+              className="block w-full min-w-0 appearance-none box-border rounded-md border border-gray-300 bg-white px-3 py-2 text-xs outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
             />
           </div>
         </div>
